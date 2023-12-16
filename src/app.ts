@@ -2,12 +2,13 @@ import express, {
   Request,
   Response,
   NextFunction,
-  ErrorRequestHandler,
+  ErrorRequestHandler
 } from 'express';
 import { AppLogger } from './core/Logger';
 import { basePath, environment, info, port } from './config/configManager';
 import { Api } from './helper/appHelper';
 import { AppRouting } from './appRouting';
+import apiKey from './auth/apiKey';
 
 export class App {
   public app: express.Express;
@@ -22,7 +23,7 @@ export class App {
   private configure() {
     this.configureMiddleware();
     this.configureBaseRoute();
-    this.configureRoutes();
+    // this.configureRoutes();
     this.errorHandler();
   }
 
@@ -31,6 +32,7 @@ export class App {
     // this.app.use(compression());
     // this.app.use(urlencoded({ limit: '50mb', extended: true }));
     AppLogger.configureLogger();
+    this.app.use(apiKey);
   }
 
   private configureBaseRoute() {
@@ -45,16 +47,17 @@ export class App {
     new AppRouting(this.router);
   }
 
-  private configureRoutes() {
-    this.app.use((request: Request, _: Response, next: NextFunction) => {
-      for (const key in request.query) {
-        if (key) {
-          request.query[key.toLowerCase()] = request.query[key];
-        }
-      }
-      next();
-    });
-  }
+  // private configureRoutes() {
+  //   // cames for routes which does not present
+  //   this.app.use((request: Request, _: Response, next: NextFunction) => {
+  //     for (const key in request.query) {
+  //       if (key) {
+  //         request.query[key.toLowerCase()] = request.query[key];
+  //       }
+  //     }
+  //     next();
+  //   });
+  // }
 
   private errorHandler() {
     this.app.use(

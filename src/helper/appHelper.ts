@@ -43,7 +43,7 @@ function jsonResponse(
       json: { (arg0: any): void; new (): any };
     };
   },
-  body: { message: string | undefined; errors?: any; error?: any, data?:any},
+  body: { message: string | undefined; errors?: any; error?: any; data?: any },
   options: { status?: any },
 ) {
   options = options || {};
@@ -127,8 +127,7 @@ const Api = {
   serverError(
     _: any,
     res: any,
-    // error: { message: any; stack?: any; stacktrace?: string | undefined },
-    error: any
+    error: any,
   ) {
     if (error instanceof Error) {
       error = {

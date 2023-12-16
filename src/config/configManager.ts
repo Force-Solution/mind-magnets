@@ -1,7 +1,7 @@
 export const environment = process.env.NODE_ENV;
 export const port = process.env.PORT;
 export const timezone = process.env.TZ;
-export const basePath = "/";
+export const basePath = "/api/v1";
 export const info = "";
 
 export const db = {
