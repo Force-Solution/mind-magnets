@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AdminController } from './controllers/AdminController';
+import { AdminController } from '@src/controllers/AdminController';
 // import { CustomerController } from "./controller/customer.controller";
 
 export interface AppRoute {

@@ -1,8 +1,9 @@
-import { environment } from '../config/configManager';
-import { Api } from '../helper/appHelper';
 import { ErrorRequestHandler, Request, Response } from 'express';
 
-export type error = string| string[]| ErrorRequestHandler| Error;
+import { environment } from '@src/config/configManager';
+import { Api } from '@src/helper/appHelper';
+
+export type error = string | string[] | ErrorRequestHandler | Error;
 
 export const enum ErrorType {
   BAD_TOKEN = 'BadTokenError',

@@ -1,7 +1,7 @@
 'use strict';
 
 import { Request, Response } from "express";
-import { error } from "../ErrorBoundary/ApiError";
+import { error } from "@src/ErrorBoundary/ApiError";
 
 const _hasOwnProperty = Object.prototype.hasOwnProperty;
 

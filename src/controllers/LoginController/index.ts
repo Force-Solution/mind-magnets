@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { AppRoute } from '../../appRouting';
-import { Api } from '../../helper/appHelper';
+import { AppRoute } from '@src/appRouting';
+import { Api } from '@src/helper/appHelper';
 
 export class LoginController implements AppRoute {
   public route = '/login';

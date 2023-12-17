@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { AppLogger } from '../core/Logger';
+import { AppLogger } from '@src/core/Logger';
 const router = express.Router();
 
 export default router.use((request: Request, _: Response, next: NextFunction)=>{

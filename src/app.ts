@@ -4,12 +4,13 @@ import express, {
   NextFunction,
   ErrorRequestHandler
 } from 'express';
-import { AppLogger } from './core/Logger';
-import { basePath, environment, info, port } from './config/configManager';
-import { Api } from './helper/appHelper';
-import { AppRouting } from './appRouting';
-import util from './helper/util';
-import { InternalError, NotFoundError } from './ErrorBoundary/ApiError';
+
+import { basePath, environment, info, port } from '@src/config/configManager';
+import { InternalError, NotFoundError } from '@src/ErrorBoundary/ApiError';
+import { Api } from '@src/helper/appHelper';
+import { AppRouting } from '@src/appRouting';
+import logger from '@src/core/logging';
+import { AppLogger } from '@src/core/Logger';
 
 export class App {
   public app: express.Express;
@@ -30,7 +31,7 @@ export class App {
 
   private configureMiddleware() {
     AppLogger.configureLogger();
-    this.app.use(util); // log request
+    this.app.use(logger); // log request
   }
 
   private configureBaseRoute() {
