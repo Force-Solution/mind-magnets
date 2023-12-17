@@ -8,7 +8,8 @@ import { AppLogger } from './core/Logger';
 import { basePath, environment, info, port } from './config/configManager';
 import { Api } from './helper/appHelper';
 import { AppRouting } from './appRouting';
-import apiKey from './auth/apiKey';
+import util from './helper/util';
+import { InternalError, NotFoundError } from './ErrorBoundary/ApiError';
 
 export class App {
   public app: express.Express;
@@ -28,11 +29,8 @@ export class App {
   }
 
   private configureMiddleware() {
-    // this.app.use(json({ limit: '50mb' }));
-    // this.app.use(compression());
-    // this.app.use(urlencoded({ limit: '50mb', extended: true }));
     AppLogger.configureLogger();
-    this.app.use(apiKey);
+    this.app.use(util); // log request
   }
 
   private configureBaseRoute() {
@@ -71,13 +69,14 @@ export class App {
           AppLogger.error('Payload', JSON.stringify(request.body));
         }
         AppLogger.error('Error', error);
-        Api.serverError(request, res, error);
+        new InternalError(request, res, error);
       },
     );
 
     // catch 404 and forward to error handler
     this.app.use((request, res) => {
-      Api.notFound(request, res);
+      const error =  "Route does not exist."
+      new NotFoundError(request, res, error);
     });
   }
 

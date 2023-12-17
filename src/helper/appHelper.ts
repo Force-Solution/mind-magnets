@@ -1,5 +1,8 @@
 'use strict';
 
+import { Request, Response } from "express";
+import { error } from "../ErrorBoundary/ApiError";
+
 const _hasOwnProperty = Object.prototype.hasOwnProperty;
 
 const Status = {
@@ -36,14 +39,8 @@ function statusMessage(status: number) {
 }
 
 function jsonResponse(
-  res: {
-    status: (arg0: any) => {
-      (): any;
-      new (): any;
-      json: { (arg0: any): void; new (): any };
-    };
-  },
-  body: { message: string | undefined; errors?: any; error?: any; data?: any },
+  res: Response,
+  body: any,
   options: { status?: any },
 ) {
   options = options || {};
@@ -52,15 +49,13 @@ function jsonResponse(
 }
 
 const Api = {
-  ok(_: any, res: any, data: any) {
+  ok(_: Request, res: Response, data: any) {
     jsonResponse(res, data, {
       status: Status.OK,
     });
   },
 
-  badRequest(_: any, res: any, errors: any[]) {
-    errors = Array.isArray(errors) ? errors : [errors];
-
+  badRequest(_: Request, res: Response, errors: error) {
     const body = {
       message: statusMessage(Status.BAD_REQUEST),
       errors,
@@ -71,7 +66,7 @@ const Api = {
     });
   },
 
-  unauthorized(_: any, res: any, error: any) {
+  unauthorized(_: Request, res: Response, error: error) {
     const body = {
       message: statusMessage(Status.UNAUTHORIZED),
       error,
@@ -82,9 +77,10 @@ const Api = {
     });
   },
 
-  forbidden(_: any, res: any) {
+  forbidden(_: Request, res: Response, error: error) {
     const body = {
       message: statusMessage(Status.FORBIDDEN),
+      error: error
     };
 
     jsonResponse(res, body, {
@@ -92,9 +88,10 @@ const Api = {
     });
   },
 
-  notFound(_: any, res: any) {
+  notFound(_: Request, res: Response, error: error) {
     const body = {
       message: statusMessage(Status.NOT_FOUND),
+      error
     };
 
     jsonResponse(res, body, {
@@ -102,9 +99,10 @@ const Api = {
     });
   },
 
-  unsupportedAction(_: any, res: any) {
+  unsupportedAction(_: Request, res: Response, error:error) {
     const body = {
       message: statusMessage(Status.UNSUPPORTED_ACTION),
+      error
     };
 
     jsonResponse(res, body, {
@@ -112,9 +110,7 @@ const Api = {
     });
   },
 
-  invalid(_: any, res: any, errors: any[]) {
-    errors = Array.isArray(errors) ? errors : [errors];
-
+  invalid(_: Request, res: Response, errors: error) {
     const body = {
       message: statusMessage(Status.VALIDATION_FAILED),
       errors,
@@ -124,20 +120,17 @@ const Api = {
       status: Status.VALIDATION_FAILED,
     });
   },
-  serverError(
-    _: any,
-    res: any,
-    error: any,
-  ) {
+  serverError(_: Request, res: Response, error: error) {
+    let composedErr;
     if (error instanceof Error) {
-      error = {
+      composedErr = {
         message: error.message,
         stacktrace: error.stack,
       };
     }
     const body = {
       message: statusMessage(Status.SERVER_ERROR),
-      error,
+      composedErr,
     };
 
     jsonResponse(res, body, {
@@ -146,8 +139,8 @@ const Api = {
   },
 
   requireParams(
-    request: { body: any; params: any; query: any },
-    res: any,
+    request: Request,
+    res: Response,
     parameters: any[],
     next: () => void,
   ) {
@@ -172,15 +165,15 @@ const Api = {
     }
   },
 
-  created(_: any, res: any, data: any) {
+  created(_: Request, res: Response, data: any) {
     jsonResponse(res, data, {
       status: Status.OK,
     });
   },
 
   requireHeaders(
-    request: { headers: any },
-    res: any,
+    request: Request,
+    res: Response,
     headers: any[],
     next: () => void,
   ) {

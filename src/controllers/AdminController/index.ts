@@ -1,12 +1,14 @@
 import { Router, Request, Response} from 'express';
 import { AppRoute } from '../../appRouting';
-import { Api } from '../../helper/appHelper';
+import apiKey from '../../auth/apiKey';
+import { AuthFailureError, InternalError } from '../../ErrorBoundary/ApiError';
 
 export class AdminController implements AppRoute {
   public route = '/admin';
   public router: Router = Router();
 
   constructor() {
+    this.router.use(apiKey);
     this.router.get('/', this.getCustomers);
     // this.router.get("/:id", this.getCustomer);
     // this.router.post("/", this.addCustomer);
@@ -20,6 +22,6 @@ export class AdminController implements AppRoute {
   ): Promise<any> {
     // const helper = new SqlHelper('select * from customer');
     // const results = await helper.select();
-    return Api.ok(request, response, "I am back");
+    return new InternalError(request, response);
   }
 }
