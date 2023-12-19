@@ -1,7 +1,7 @@
 import { Router, Request, Response} from 'express';
 import { AppRoute } from '@src/appRouting';
 import apiKey from '@src/auth/apiKey';
-import { InternalError } from '@src/ErrorBoundary/ApiError';
+import { InternalError } from '@src/core/API_Handler/ApiError';
 
 export class AdminController implements AppRoute {
   public route = '/admin';

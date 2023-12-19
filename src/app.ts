@@ -5,11 +5,12 @@ import express, {
   ErrorRequestHandler
 } from 'express';
 
+import { json, urlencoded } from "body-parser";
 import { basePath, environment, info, port } from '@src/config/configManager';
-import { InternalError, NotFoundError } from '@src/ErrorBoundary/ApiError';
-import { Api } from '@src/helper/appHelper';
+import { InternalError, NotFoundError } from '@src/core/API_Handler/ApiError';
+import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { AppRouting } from '@src/appRouting';
-import logger from '@src/core/logging';
+import logger from '@src/core/Logger/logging';
 import { AppLogger } from '@src/core/Logger';
 
 export class App {
@@ -31,6 +32,8 @@ export class App {
 
   private configureMiddleware() {
     AppLogger.configureLogger();
+    this.app.use(json({ limit: "50mb" }));
+    this.app.use(urlencoded({ limit: "50mb", extended: true }));
     this.app.use(logger); // log request
   }
 
@@ -70,7 +73,7 @@ export class App {
           AppLogger.error('Payload', JSON.stringify(request.body));
         }
         AppLogger.error('Error', error);
-        new InternalError(request, res, error);
+         return new InternalError(request, res);
       },
     );
 
@@ -82,8 +85,7 @@ export class App {
   }
 
   public run() {
-    const listeningPort = port ??  80;
-    this.app.listen(listeningPort);
-    AppLogger.info(environment ?? 'development', 'Listen port at ' + listeningPort);
+    this.app.listen(port);
+    AppLogger.info(environment || "dev", 'Listen port at ' + port);
   }
 }

@@ -2,10 +2,11 @@ import { createLogger, transports, Logger, format } from 'winston';
 import path from 'path';
 import fs from 'fs';
 import 'winston-daily-rotate-file';
+import { logDirectory } from '@src/config/configManager';
 
 export class AppLogger {
   private static logger: Logger;
-  private static logDirectory = path.join(process.cwd(), 'logs');
+  private static logDirectory = path.join(logDirectory, 'logs');
 
   private static CreateLogDirectoryIfNotExists() {
     if (!fs.existsSync(this.logDirectory)) {

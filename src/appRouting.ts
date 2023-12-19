@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AdminController } from '@src/controllers/AdminController';
-// import { CustomerController } from "./controller/customer.controller";
+import { LoginController } from './controllers/LoginController';
 
 export interface AppRoute {
   route: string;
@@ -13,9 +13,9 @@ export class AppRouting {
     this.route = route;
     this.configure();
   }
-  public configure() {
-    // Add the routing classes.
+  private configure() {
     this.addRoute(new AdminController());
+    this.addRoute(new LoginController());
   }
 
   private addRoute(appRoute: AppRoute) {

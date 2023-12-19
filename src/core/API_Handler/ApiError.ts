@@ -1,7 +1,7 @@
 import { ErrorRequestHandler, Request, Response } from 'express';
 
 import { environment } from '@src/config/configManager';
-import { Api } from '@src/helper/appHelper';
+import { Api } from '@src/core/API_Handler/ResponseHelper';
 
 export type error = string | string[] | ErrorRequestHandler | Error;
 
@@ -31,7 +31,7 @@ export abstract class ApiError extends Error {
     request: Request,
     response: Response,
     type: ErrorType,
-    error: string | string[] | ErrorRequestHandler | Error ,
+    error: error ,
   ) {
     switch (type) {
       case ErrorType.BAD_TOKEN:
@@ -62,7 +62,7 @@ export class AuthFailureError extends ApiError {
   constructor(
     request: Request,
     response: Response,
-    message = 'Invalid Credentials',
+    message:error = 'Invalid Credentials',
   ) {
     super(request, response, ErrorType.UNAUTHORIZED, message);
   }
@@ -72,14 +72,14 @@ export class InternalError extends ApiError {
   constructor(
     request: Request,
     response: Response,
-    message: string | ErrorRequestHandler  = 'Internal error',
+    message: error  = 'Internal error',
   ) {
     super(request, response, ErrorType.INTERNAL, message);
   }
 }
 
 export class BadRequestError extends ApiError {
-  constructor(request: Request, response: Response, message = 'Bad Request') {
+  constructor(request: Request, response: Response, message:error = 'Bad Request') {
     super(request, response, ErrorType.BAD_REQUEST, message);
   }
 }
