@@ -1,7 +1,7 @@
 'use strict';
 
 import { Request, Response } from "express";
-import { error } from "@src/ErrorBoundary/ApiError";
+import { error } from "@src/core/API_Handler/ApiError";
 
 const _hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -130,7 +130,7 @@ const Api = {
     }
     const body = {
       message: statusMessage(Status.SERVER_ERROR),
-      composedErr,
+      error: composedErr,
     };
 
     jsonResponse(res, body, {

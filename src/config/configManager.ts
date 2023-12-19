@@ -2,7 +2,7 @@ export const environment = process.env.NODE_ENV;
 export const port = process.env.PORT;
 export const timezone = process.env.TZ;
 export const basePath = "/api/v1";
-export const info = "";
+export const info = "Server is working fine!!";
 
 export const db = {
   name: process.env.DB_NAME || '',
@@ -23,7 +23,7 @@ export const tokenInfo = {
   audience: process.env.TOKEN_AUDIENCE || '',
 };
 
-export const logDirectory = process.env.LOG_DIR;
+export const logDirectory = process.cwd();
 
 export const redis = {
   host: process.env.REDIS_HOST || '',
