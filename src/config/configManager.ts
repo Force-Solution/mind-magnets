@@ -12,6 +12,7 @@ export const db = {
   password: process.env.DB_USER_PWD || '',
   minPoolSize: parseInt(process.env.DB_MIN_POOL_SIZE || '5'),
   maxPoolSize: parseInt(process.env.DB_MAX_POOL_SIZE || '10'),
+  url: process.env.DB_URL || ''
 };
 
 export const corsUrl = process.env.CORS_URL;
