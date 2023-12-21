@@ -1,9 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import asyncHandler from '@src/helper/asyncHandler';
 import { basePath } from '@src/config/configManager';
-import publicRoutes, { Header } from '@src/auth/publicRoutes';
+import publicRoutes from '@src/auth/publicRoutes';
 import { AppLogger } from '@src/core/Logger';
 import { AuthFailureError } from '@src/core/API_Handler/ApiError';
+import { Header } from '@src/types/header';
 const router = express.Router();
 
 export default router.use(

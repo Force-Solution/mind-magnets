@@ -1,7 +1,7 @@
 import mongoose, { Schema, model, Date, Model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-import { saltHashRounds } from '@src/config/configManager';
+//import { saltHashRounds } from '@src/config/configManager';
 
 export const enum IRole {
   Admin = 'admin',
@@ -34,7 +34,12 @@ interface IUserModel extends Model<IUserDoc> {
 }
 
 const validateEmail = (email: string) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email);
+const counterSchema = new Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 },
+});
 
+const Counter = model('Counter', counterSchema);
 const schema = new Schema<IUserDoc, IUserModel>(
   {
     firstName: {
@@ -47,11 +52,7 @@ const schema = new Schema<IUserDoc, IUserModel>(
       required: true,
       trim: true
     },
-    userId: {
-      type: Number,
-      index: true,
-      unique: true,
-    },
+    userId: { type: Number, unique: true },
     role: {
       type: String,
       required: true,
@@ -101,12 +102,24 @@ schema.methods.isPasswordMatch = async function(password:string){
   return bcrypt.compare(password, this.password);
 };
 
-schema.pre('save', async function(next){
-  if(this.isModified('password')){
-    const saltRounds:number = parseInt(saltHashRounds || '8');
-    this.password = await bcrypt.hash(this.password, saltRounds);
+schema.pre('save', async function (next) {
+  if (this.isNew) {
+    try {
+      const doc = this;
+      const counter = await Counter.findOneAndUpdate(
+        { _id: 'userId' },
+        { $inc: { seq: 1 } },
+        { upsert: true, new: true },
+      );
+
+      doc.userId = counter.seq;
+      next();
+    } catch (err) {
+      //next(err);
+    }
+  } else {
+    next();
   }
-  next();
 });
 
 const User = model<IUserDoc, IUserModel>('User', schema);

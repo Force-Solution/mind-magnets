@@ -1,4 +1,4 @@
-import User, { IUser } from '@src/dao/model/User';
+import User, { IUser } from '@src/dao/model/user';
 
 export class UserRepo {
   public async createUser(userBody: IUser) {
