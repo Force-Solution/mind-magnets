@@ -7,7 +7,6 @@ import express, {
 
 import { json, urlencoded } from "body-parser";
 import { basePath, environment, info, port } from '@src/config/configManager';
-import { InternalError, NotFoundError } from '@src/core/API_Handler/ApiError';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { AppRouting } from '@src/appRouting';
 import logger from '@src/core/Logger/logging';
@@ -66,21 +65,21 @@ export class App {
       (
         error: ErrorRequestHandler,
         request: Request,
-        res: Response,
+        response: Response,
         _next: NextFunction,
       ) => {
         if (request.body) {
           AppLogger.error('Payload', JSON.stringify(request.body));
         }
         AppLogger.error('Error', error);
-         return new InternalError(request, res);
+        return Api.serverError(request, response, error);
       },
     );
 
     // catch 404 and forward to error handler
-    this.app.use((request, res) => {
+    this.app.use((request, response) => {
       const error =  "Route does not exist."
-      new NotFoundError(request, res, error);
+      return Api.notFound(request, response, error);
     });
   }
 
