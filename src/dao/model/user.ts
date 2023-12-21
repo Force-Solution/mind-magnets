@@ -15,6 +15,7 @@ export interface IUser{
   firstName: string;
   lastName: string;
   userId: number;
+  userName: string;
   role: IRole;
   profileUrl: string;
   email: string;
@@ -51,6 +52,12 @@ const schema = new Schema<IUserDoc, IUserModel>(
       type: Number,
       index: true,
       unique: true,
+    },
+    userName: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true
     },
     role: {
       type: String,
