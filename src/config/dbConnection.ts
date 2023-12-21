@@ -62,7 +62,7 @@ export default class MongooseConnection {
     }
     mongoose
       .connect(this.options.mongoUrl, this.mongoConnectionOptions)
-      .catch(() => {});
+      .catch(error => new Error(error));
   };
 
   private onConnected = () => {

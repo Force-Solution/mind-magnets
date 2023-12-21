@@ -3,6 +3,7 @@ export const port = process.env.PORT;
 export const timezone = process.env.TZ;
 export const basePath = "/api/v1";
 export const info = "Server is working fine!!";
+export const saltHashRounds = process.env.HASH_ROUNDS;
 
 export const db = {
   name: process.env.DB_NAME || '',
