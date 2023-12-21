@@ -1,12 +1,5 @@
 import { Schema, model, Date, Model } from 'mongoose';
-
-export const enum IRole {
-  Admin = 'admin',
-  Teacher = 'teacher',
-  Student = 'student',
-  Parent = 'parent',
-}
-
+import { IRole } from '@src/types/roles';
 export interface IUserModel {
   firstName: string;
   lastName: string;
