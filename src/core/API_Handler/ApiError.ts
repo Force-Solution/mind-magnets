@@ -1,129 +1,66 @@
-import { ErrorRequestHandler, Request, Response } from 'express';
-
-import { environment } from '@src/config/configManager';
-import { Api } from '@src/core/API_Handler/ResponseHelper';
+// import { ErrorRequestHandler} from 'express';
 import { ErrorType } from '@src/types/errorType';
-export type error = string | string[] | ErrorRequestHandler | Error;
 
 export abstract class ApiError extends Error {
-  constructor(
-    public request: Request,
-    public response: Response,
-    public type: ErrorType,
-    public error: error = ['Error Occured'],
-  ) {
+  message: string;
+  constructor(type: ErrorType, message: string) {
     super(type);
-    this.handle(request, response, type, error);
+    this.message = message;
   }
-  protected handle(
-    request: Request,
-    response: Response,
-    type: ErrorType,
-    error: error,
-  ) {
-    switch (type) {
-      case ErrorType.BAD_TOKEN:
-      case ErrorType.TOKEN_EXPIRED:
-      case ErrorType.UNAUTHORIZED:
-        return Api.unauthorized(request, response, error);
-      case ErrorType.INTERNAL:
-        return Api.serverError(request, response, error);
-      case ErrorType.NOT_FOUND:
-      case ErrorType.NO_ENTRY:
-      case ErrorType.NO_DATA:
-        return Api.notFound(request, response, error);
-      case ErrorType.BAD_REQUEST:
-        return Api.badRequest(request, response, error);
-      case ErrorType.FORBIDDEN:
-        return Api.forbidden(request, response, error);
-      default: {
-        let message = error;
-        // Do not send failure message in production as it may send sensitive data
-        if (environment === 'production') message = 'Something wrong happened.';
-        return Api.serverError(request, response, message);
-      }
-    }
-  }
+
+  public getErrorMsg(): string {
+    return this.message;
+  } 
 }
 
 export class AuthFailureError extends ApiError {
-  constructor(
-    request: Request,
-    response: Response,
-    message: error = 'Invalid Credentials',
-  ) {
-    super(request, response, ErrorType.UNAUTHORIZED, message);
+  constructor(message = 'Invalid Credentials') {
+    super(ErrorType.UNAUTHORIZED, message);
   }
 }
 
 export class InternalError extends ApiError {
-  constructor(
-    request: Request,
-    response: Response,
-    message: error = 'Internal error',
-  ) {
-    super(request, response, ErrorType.INTERNAL, message);
+  constructor(message = 'Internal error') {
+    super(ErrorType.INTERNAL, message);
   }
 }
 
 export class BadRequestError extends ApiError {
-  constructor(
-    request: Request,
-    response: Response,
-    message: error = 'Bad Request',
-  ) {
-    super(request, response, ErrorType.BAD_REQUEST, message);
+  constructor(message = 'Bad Request') {
+    super(ErrorType.BAD_REQUEST, message);
   }
 }
 
 export class NotFoundError extends ApiError {
-  constructor(request: Request, response: Response, message = 'Not Found') {
-    super(request, response, ErrorType.NOT_FOUND, message);
+  constructor(message = 'Not Found') {
+    super(ErrorType.NOT_FOUND, message);
   }
 }
 
 export class ForbiddenError extends ApiError {
-  constructor(
-    request: Request,
-    response: Response,
-    message = 'Permission denied',
-  ) {
-    super(request, response, ErrorType.FORBIDDEN, message);
+  constructor(message = 'Permission denied') {
+    super(ErrorType.FORBIDDEN, message);
   }
 }
 
 export class NoEntryError extends ApiError {
-  constructor(
-    request: Request,
-    response: Response,
-    message = "Entry don't exists",
-  ) {
-    super(request, response, ErrorType.NO_ENTRY, message);
+  constructor(message = "Entry don't exists") {
+    super(ErrorType.NO_ENTRY, message);
   }
 }
 
 export class BadTokenError extends ApiError {
-  constructor(
-    request: Request,
-    response: Response,
-    message = 'Token is not valid',
-  ) {
-    super(request, response, ErrorType.BAD_TOKEN, message);
+  constructor(message = 'Token is not valid') {
+    super(ErrorType.BAD_TOKEN, message);
   }
 }
 
 export class TokenExpiredError extends ApiError {
-  constructor(
-    request: Request,
-    response: Response,
-    message = 'Token is expired',
-  ) {
-    super(request, response, ErrorType.TOKEN_EXPIRED, message);
+  constructor(message = 'Token is expired') {
+    super(ErrorType.TOKEN_EXPIRED, message);
   }
 }
 
-//   export class NoDataError extends ApiError {
-//     constructor(message = 'No data available') {
-//       super(ErrorType.NO_DATA, message);
-//     }
-//   }
+export const enum message{
+  DuplicateEmail="Duplicate Email is not Allowed"
+}
