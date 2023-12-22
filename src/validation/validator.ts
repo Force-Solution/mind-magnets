@@ -1,8 +1,10 @@
 import Joi from 'joi';
 import { Request, Response, NextFunction } from 'express';
+
 import { AppLogger } from '@src/core/Logger';
-import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { ValidationSource } from '@src/types/request';
+import { Api } from '@src/core/API_Handler/ResponseHelper';
+
 export default (
     schema: Joi.AnySchema,
     source: ValidationSource = ValidationSource.BODY,
@@ -16,7 +18,7 @@ export default (
       const message = details.map((i) => i.message.replace(/['"]+/g, ''));
 
       AppLogger.error('Request validation Error: ', message.join(','));
-      return new BadRequestError(request, response, message);
+      return Api.badRequest(request, response, message);
     } catch (error) {
       next(error);
     }

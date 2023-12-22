@@ -1,7 +1,6 @@
 'use strict';
 
 import { Request, Response } from "express";
-import { error } from "@src/core/API_Handler/ApiError";
 
 const _hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -39,88 +38,94 @@ function statusMessage(status: number) {
 }
 
 function jsonResponse(
-  res: Response,
+  response: Response,
   body: any,
   options: { status?: any },
 ) {
   options = options || {};
   options.status = options.status || Status.OK;
-  res.status(options.status).json(body || null);
+  response.status(options.status).json(body || null);
 }
 
 const Api = {
-  ok(_: Request, res: Response, data: any) {
-    jsonResponse(res, data, {
+  ok(_: Request, response: Response, data: any) {
+    jsonResponse(response, data, {
       status: Status.OK,
     });
   },
 
-  badRequest(_: Request, res: Response, errors: error) {
+  created(_:Request, response: Response, data:any){
+    jsonResponse(response, data, {
+      status: Status.CREATED,
+    });
+  },
+
+  badRequest(_: Request, response: Response, errors:any) {
     const body = {
       message: statusMessage(Status.BAD_REQUEST),
       errors,
     };
 
-    jsonResponse(res, body, {
+    jsonResponse(response, body, {
       status: Status.BAD_REQUEST,
     });
   },
 
-  unauthorized(_: Request, res: Response, error: error) {
+  unauthorized(_: Request, response: Response, error:any) {
     const body = {
       message: statusMessage(Status.UNAUTHORIZED),
       error,
     };
 
-    jsonResponse(res, body, {
+    jsonResponse(response, body, {
       status: Status.UNAUTHORIZED,
     });
   },
 
-  forbidden(_: Request, res: Response, error: error) {
+  forbidden(_: Request, response: Response, error:any) {
     const body = {
       message: statusMessage(Status.FORBIDDEN),
       error: error
     };
 
-    jsonResponse(res, body, {
+    jsonResponse(response, body, {
       status: Status.FORBIDDEN,
     });
   },
 
-  notFound(_: Request, res: Response, error: error) {
+  notFound(_: Request, response: Response, error:any) {
     const body = {
       message: statusMessage(Status.NOT_FOUND),
       error
     };
 
-    jsonResponse(res, body, {
+    jsonResponse(response, body, {
       status: Status.NOT_FOUND,
     });
   },
 
-  unsupportedAction(_: Request, res: Response, error:error) {
+  unsupportedAction(_: Request, response: Response, error:any) {
     const body = {
       message: statusMessage(Status.UNSUPPORTED_ACTION),
       error
     };
 
-    jsonResponse(res, body, {
+    jsonResponse(response, body, {
       status: Status.UNSUPPORTED_ACTION,
     });
   },
 
-  invalid(_: Request, res: Response, errors: error) {
+  invalid(_: Request, response: Response, errors:any) {
     const body = {
       message: statusMessage(Status.VALIDATION_FAILED),
       errors,
     };
 
-    jsonResponse(res, body, {
+    jsonResponse(response, body, {
       status: Status.VALIDATION_FAILED,
     });
   },
-  serverError(_: Request, res: Response, error: error) {
+  serverError(_: Request, response: Response, error:any) {
     let composedErr;
     if (error instanceof Error) {
       composedErr = {
@@ -133,14 +138,14 @@ const Api = {
       error: composedErr,
     };
 
-    jsonResponse(res, body, {
+    jsonResponse(response, body, {
       status: Status.SERVER_ERROR,
     });
   },
 
   requireParams(
     request: Request,
-    res: Response,
+    response: Response,
     parameters: any[],
     next: () => void,
   ) {
@@ -159,21 +164,15 @@ const Api = {
     });
 
     if (missing.length) {
-      Api.badRequest(request, res, missing);
+      Api.badRequest(request, response, missing);
     } else {
       next();
     }
   },
 
-  created(_: Request, res: Response, data: any) {
-    jsonResponse(res, data, {
-      status: Status.OK,
-    });
-  },
-
   requireHeaders(
     request: Request,
-    res: Response,
+    response: Response,
     headers: any[],
     next: () => void,
   ) {
@@ -188,7 +187,7 @@ const Api = {
     });
 
     if (missing.length) {
-      Api.badRequest(request, res, missing);
+      Api.badRequest(request, response, missing);
     } else {
       next();
     }
