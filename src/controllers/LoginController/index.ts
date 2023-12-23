@@ -8,7 +8,7 @@ import {
 } from '@src/core/API_Handler/ApiError';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import validator from '@src/validation/validator';
-import user from '@src/validation/schema/user';
+import user  from '@src/validation/schema/user';
 
 export class LoginController implements AppRoute {
   public route = '/user';
@@ -38,8 +38,7 @@ export class LoginController implements AppRoute {
       const { email, password } = request.body;
       const user = await new UserRepo().getUserByEmail(email);
 
-      if (!user) throw new AuthFailureError();
-      else if (!user.isPasswordMatch(password)) throw new AuthFailureError();
+      if (!user ||!user.isPasswordMatch(password)) throw new AuthFailureError();
       else return Api.ok(request, response, 'LoggedIN');
       
     } catch (error) {
