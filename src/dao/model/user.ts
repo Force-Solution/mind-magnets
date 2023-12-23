@@ -1,15 +1,9 @@
 import mongoose, { Schema, model, Date, Model } from 'mongoose';
 import bcrypt from 'bcrypt';
-
+import { IRole } from '@src/types/roles';
 import { saltHashRounds } from '@src/config/configManager';
 import AutoIncrement from './autoIncrement';
 
-export const enum IRole {
-  Admin = 'admin',
-  Teacher = 'teacher',
-  Student = 'student',
-  Parent = 'parent',
-}
 
 export interface IUser{
   firstName: string;
