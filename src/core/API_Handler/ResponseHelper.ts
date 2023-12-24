@@ -14,6 +14,7 @@ const Status = {
   VALIDATION_FAILED: 422,
   SERVER_ERROR: 500,
   CREATED: 201,
+  NO_CONTENT: 204
 };
 
 function statusMessage(status: number) {
@@ -34,6 +35,8 @@ function statusMessage(status: number) {
       return 'Internal Server Error';
     case Status.CREATED:
       return 'Created';
+    case Status.NO_CONTENT:
+      return 'No Content'
   }
 }
 
@@ -57,6 +60,12 @@ const Api = {
   created(_:Request, response: Response, data:any){
     jsonResponse(response, data, {
       status: Status.CREATED,
+    });
+  },
+
+  noContent(_:Request, response: Response, data?:any){
+    jsonResponse(response, data, {
+      status: Status.NO_CONTENT,
     });
   },
 

@@ -1,5 +1,6 @@
 import { BadRequestError, message } from '@src/core/API_Handler/ApiError';
-import User, { IUser } from '@src/dao/model/user';
+import User from '@src/dao/model/user';
+import { IUser } from '@src/types/user';
 
 export class UserRepo {
   public async createUser(userBody: IUser) {
@@ -10,6 +11,6 @@ export class UserRepo {
   };
   
   public async getUserByEmail(email: string) {
-    return User.findOne({ email });
+    return await User.findOne({ email });
   }
 }
