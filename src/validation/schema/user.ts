@@ -10,8 +10,8 @@ const passwordValidation: StringSchema<string> = Joi.string()
 
 const roleValidation: StringSchema<string> = Joi.string()
   .required()
-  .valid([IRole.Admin, IRole.Teacher, IRole.Student, IRole.Parent])
-  .message(customMessages['string.role']);
+  .valid(IRole.Admin, IRole.Teacher, IRole.Student, IRole.Parent)
+  // .message(customMessages['string.role'])
 
 export default {
   credential: Joi.object().keys({
@@ -24,6 +24,9 @@ export default {
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     role: roleValidation,
-    userName: Joi.string().required().alphanum()
+    userName: Joi.string().required().alphanum(),
   }),
+  logout:Joi.object().keys({
+    refreshToken: Joi.string().required(),
+  })
 };
