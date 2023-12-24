@@ -5,7 +5,7 @@ import { UserRepo } from '@src/dao/repository/UserRepo';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import validator from '@src/validation/validator';
 import user from '@src/validation/schema/user';
-import * as helpers from '@src/controllers/LoginController/helper';
+import * as helpers from '@src/controllers/UserController/helper';
 import * as ErrorBoundary from '@src/helper/ErrorHandling';
 import { TokenRepo } from '@src/dao/repository/TokenRepo';
 
@@ -15,7 +15,7 @@ export class LoginController implements AppRoute {
 
   constructor() {
     this.router.post('/login', validator(user.credential), this.getLoggedIn);
-    this.router.post('/logout', this.getLoggedOut);
+    this.router.post('/logout', validator(user.logout), this.getLoggedOut);
     this.router.post('/create', validator(user.createUser), this.createUser);
   }
 
