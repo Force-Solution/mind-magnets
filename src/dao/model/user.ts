@@ -1,40 +1,11 @@
-import mongoose, { Schema, model, Date, Model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 import { saltHashRounds } from '@src/config/configManager';
-import AutoIncrement from './autoIncrement';
-
-export const enum IRole {
-  Admin = 'admin',
-  Teacher = 'teacher',
-  Student = 'student',
-  Parent = 'parent',
-}
-
-export interface IUser{
-  firstName: string;
-  lastName: string;
-  userId: number;
-  userName: string;
-  role: IRole;
-  profileUrl: string;
-  email: string;
-  isEmailVerified:boolean;
-  password: string;
-  createdAt: Date;
-  updatedAt: Date;
-  accessToken: string[];
-  refreshToken: string[];
-}
-interface IUserDoc extends IUser, Document{
-  isPasswordMatch(password:string): Promise<boolean>;
-}
-
-interface IUserModel extends Model<IUserDoc> {
-  isEmailTaken(email: string, excludeUserId?: mongoose.Types.ObjectId): Promise<boolean>;
-}
-
-const validateEmail = (email: string) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email);
+import AutoIncrement from '@src/dao/model/autoIncrement';
+import { IUserDoc, IUserModel } from '@src/types/user';
+import { IRole } from '@src/types/roles';
+import { validateEmail } from '@src/helper/util';
 
 const schema = new Schema<IUserDoc, IUserModel>(
   {

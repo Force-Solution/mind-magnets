@@ -18,11 +18,12 @@
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose"
   },
   "keywords": [],
-  "author": "Deepak Yadav",
+  "author": "Deepak Yadav, Mulayam Singh Yadav",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/mongoose": "^5.11.97",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "dotenv": "^16.3.1",
@@ -46,6 +47,7 @@
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"

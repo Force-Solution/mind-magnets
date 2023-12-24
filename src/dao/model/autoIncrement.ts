@@ -1,9 +1,5 @@
 import { Schema, model } from 'mongoose';
-
-export interface IAutoIncrement{
-    _id: string,
-    seq: number
-}
+import { IAutoIncrement } from '@src/types/autoIncrement';
 
 const schema = new Schema<IAutoIncrement>({
     _id:{
