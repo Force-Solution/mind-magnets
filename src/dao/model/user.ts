@@ -57,7 +57,7 @@ const schema = new Schema<IUserDoc, IUserModel>(
     },
     password: {
       type: String,
-      required: true,
+      default: "",
     },
   },
   { timestamps: true },

@@ -1,11 +1,10 @@
 import { Router, Request, Response } from 'express';
 
 import { AppRoute } from '@src/appRouting';
-import { UserRepo } from '@src/dao/repository/UserRepo';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import validator from '@src/validation/validator';
 import user from '@src/validation/schema/user';
-import * as helpers from '@src/controllers/UserController/helper';
+import * as userService from '@src/services/user'
 import * as ErrorBoundary from '@src/helper/ErrorHandling';
 import { TokenRepo } from '@src/dao/repository/TokenRepo';
 
@@ -21,7 +20,7 @@ export class LoginController implements AppRoute {
 
   private async createUser(request: Request, response: Response): Promise<any> {
     try {
-      const user = new UserRepo().createUser(request.body);
+      const user = await userService.createUser(request.body);
       return Api.created(request, response, user);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -34,7 +33,7 @@ export class LoginController implements AppRoute {
   ): Promise<any> {
     try {
       const { email, password } = request.body;
-      const user = await helpers.loginWithEmailAndPassword(email, password);
+      const user = await userService.loginWithEmailAndPassword(email, password);
       const tokens = await new TokenRepo().generateAuthTokens(user);
 
       return Api.ok(request, response, { user, tokens });
@@ -46,7 +45,7 @@ export class LoginController implements AppRoute {
   private async getLoggedOut(request: Request, response: Response) {
     try {
       const { refreshToken } = request.body;
-      await helpers.logout(refreshToken);
+      await userService.logout(refreshToken);
       return Api.noContent(request, response)
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
