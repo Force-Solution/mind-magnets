@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AdminController } from '@src/controllers/AdminController';
-import { LoginController } from './controllers/UserController';
+import { LoginController } from '@src/controllers/UserController';
 
 export interface AppRoute {
   route: string;
