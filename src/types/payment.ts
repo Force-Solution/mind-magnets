@@ -17,7 +17,7 @@ interface IInstallment extends IBasePayment{
 export interface IPayment{
     user: string;
     paymentType: string;
-    payment: {installment: IInstallment[]} | {lumpsum: IBasePayment};
+    payment: IInstallment[] | IBasePayment;
     createdAt: Date;
     updatedAt: Date;
 }
