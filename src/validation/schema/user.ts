@@ -4,14 +4,14 @@ import { IRole } from '@src/types/roles';
 import { passwordRegex } from '@src/helper/util';
 
 const passwordValidation: StringSchema<string> = Joi.string()
-  .required()
+  .optional()
   .pattern(passwordRegex)
   .message(customMessages['string.password']);
 
 const roleValidation: StringSchema<string> = Joi.string()
   .required()
-  .valid(IRole.Admin, IRole.Teacher, IRole.Student, IRole.Parent)
-  // .message(customMessages['string.role'])
+  .valid(IRole.Admin, IRole.Teacher, IRole.Student, IRole.Parent);
+// .message(customMessages['string.role'])
 
 export default {
   credential: Joi.object().keys({
@@ -26,7 +26,12 @@ export default {
     role: roleValidation,
     userName: Joi.string().required().alphanum(),
   }),
-  logout:Joi.object().keys({
+  logout: Joi.object().keys({
     refreshToken: Joi.string().required(),
-  })
+  }),
+  auth: Joi.object().keys({
+    authorization: Joi.string()
+      .required()
+      .pattern(/^Bearer\s+\S+$/),
+  }),
 };
