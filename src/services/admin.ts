@@ -17,6 +17,6 @@ export const createStudent = async (student: IUser & IStudent & IPayment): Promi
 
 export const createTeacher = async(teacher: IUser & ITeacher):Promise<(IUserDoc | ITeacherDoc)[]> => {
    const user = await userService.createUser(teacher);
-
-   return Promise.all([user]);
+   const createdTeacher = await teacherService.createTeacher(teacher, user);
+   return Promise.all([user, createdTeacher]);
 }
