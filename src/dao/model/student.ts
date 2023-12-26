@@ -40,6 +40,7 @@ const schema = new Schema<IStudentDoc, IStudentModel>(
     },
     parentName: {
       type: String,
+      required: true,
       trim: true,
     },
     parentEmail: {
