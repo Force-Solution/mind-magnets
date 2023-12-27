@@ -4,10 +4,9 @@ import { IRole } from '@src/types/roles';
 import { saltHashRounds } from '@src/config/configManager';
 import AutoIncrement from '@src/dao/model/autoIncrement';
 import { IUserDoc, IUserModel } from '@src/types/user';
-import { IRole } from '@src/types/roles';
 import { validateEmail } from '@src/helper/util';
 
-const Counter = model('Counter', counterSchema);
+
 const schema = new Schema<IUserDoc, IUserModel>(
   {
     firstName: {
