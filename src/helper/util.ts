@@ -10,3 +10,5 @@ export const passwordRegex: RegExp =
 
 export const validateEmail = (email: string) =>
   /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email);
+
+export const addBearerString = (token: string) => "Bearer " + token;
