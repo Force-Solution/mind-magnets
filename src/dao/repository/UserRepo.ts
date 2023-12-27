@@ -13,4 +13,8 @@ export class UserRepo {
   public async getUserByEmail(email: string) {
     return await User.findOne({ email });
   }
+
+  public async countUserByRole(role: string): Promise<number>{
+    return await User.countDocuments({role});
+  }
 }

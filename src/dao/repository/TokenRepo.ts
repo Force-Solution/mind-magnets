@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import Token from '@src/dao/model/token';
 import { tokenInfo } from '@src/config/configManager';
 import { BadTokenError, TokenExpiredError } from '@src/core/API_Handler/ApiError';
-import { constructDateFromUnix } from '@src/helper/util';
+import { addBearerString, constructDateFromUnix } from '@src/helper/util';
 import { ITokenDoc, tokenType } from '@src/types/token';
 import { IUserDoc } from '@src/types/user';
 
@@ -67,13 +67,13 @@ export class TokenRepo {
 
     return {
       access: {
-        token: accessToken,
+        token: addBearerString(accessToken),
         expires: constructDateFromUnix(
           Date.now() + tokenInfo.accessTokenValidity,
         ),
       },
       refresh: {
-        token: refreshToken,
+        token: addBearerString(refreshToken),
         expires: constructDateFromUnix(
           Date.now() + tokenInfo.refreshTokenValidity,
         ),
