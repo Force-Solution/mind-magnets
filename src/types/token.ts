@@ -14,6 +14,8 @@ export interface IToken {
     iat: number;
     exp: number;
     type: string;
+    aud: string;
+    /**add issuer when handle microservices */
   }
   
   export interface TokenPayload {

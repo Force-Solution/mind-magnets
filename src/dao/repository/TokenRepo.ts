@@ -13,11 +13,14 @@ export class TokenRepo {
     expires: number,
     type: string,
     secret: string,
+    role: string
   ): string {
+    /** add issuer when microservice architecture planned */
     const payload = {
       sub: userId,
       iat: Date.now(),
       exp: Date.now() + expires,
+      aud: role,
       type,
     };
     return jwt.sign(payload, secret);
@@ -45,6 +48,7 @@ export class TokenRepo {
       tokenInfo.accessTokenValidity,
       tokenType.ACCESS,
       tokenInfo.accessTokenSecret,
+      user.role
     );
 
     const refreshToken = this.generateToken(
@@ -52,6 +56,7 @@ export class TokenRepo {
       tokenInfo.refreshTokenValidity,
       tokenType.REFRESH,
       tokenInfo.refreshTokenSecret,
+      user.role
     );
     await this.saveToken(
       refreshToken,
