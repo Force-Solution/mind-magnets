@@ -11,7 +11,7 @@ import { tokenInfo } from '@src/config/configManager';
 import * as ErrorBoundary from '@src/helper/ErrorHandling';
 
 export interface ExtendedRequest extends Request {
-  decodedToken: string | JwtPayload;
+  decodedToken: JwtPayload;
 }
 
 export const authenticate = (
@@ -28,8 +28,8 @@ export const authenticate = (
       tokenInfo.accessTokenSecret,
     );
 
-    if (typeof payload !== 'string') validateTokenData(payload);
-
+    if (typeof payload === 'string') throw new BadTokenError();
+    validateTokenData(payload);
     (request as ExtendedRequest).decodedToken = payload;
 
     next();
@@ -54,7 +54,8 @@ export const validateTokenData = (payload: JwtPayload): boolean => {
     !payload.type ||
     !Types.ObjectId.isValid(payload.sub) ||
     !validRole(payload.aud) ||
-    !validTokenType(payload.type)
+    !validTokenType(payload.type) || 
+    !verifyTime(payload.exp)
   ) {
     throw new BadTokenError();
   }
@@ -72,3 +73,8 @@ export const validTokenType = (type: string): boolean =>
     tokenType.RESET_PASSWORD,
     tokenType.VERIFY_EMAIL,
   ].some((r) => r === type);
+
+export const verifyTime = (exp?: number) => {
+    if(!exp) return false;
+    return Date.now() < exp;
+}
