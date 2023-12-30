@@ -7,5 +7,9 @@ export const savePayment = async(payment: IPayment, user: IUserDoc): Promise<IPa
         ...payment,
         user: user._id.toString()
     }
-    return await new PaymentRepo().createPayment(payload);  
+    return new PaymentRepo().createPayment(payload);  
+}
+
+export const getPaymentPendingCountOfInstallments = async():Promise<Number> => {
+    return new PaymentRepo().getPaymentPendingCountForInstallments();
 }
