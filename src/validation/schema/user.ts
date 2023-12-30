@@ -2,6 +2,7 @@ import Joi, { StringSchema } from 'joi';
 import { customMessages } from '@src/validation/util';
 import { IRole } from '@src/types/roles';
 import { passwordRegex } from '@src/helper/util';
+// import student from './student';
 
 const passwordValidation: StringSchema<string> = Joi.string()
   .optional()
@@ -33,5 +34,5 @@ export default {
     authorization: Joi.string()
       .required()
       .pattern(/^Bearer\s+\S+$/),
-  }),
+  }).unknown(true), // remove this as security descreases
 };
