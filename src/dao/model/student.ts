@@ -12,8 +12,7 @@ const schema = new Schema<IStudentDoc, IStudentModel>(
     batch: {
       type: String,
       required: true,
-      index: true,
-      trim: true,
+      ref: 'Batch'
     },
     dateOfJoin: {
       type: Date,
