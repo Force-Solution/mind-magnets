@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "prepare": "npx ts-patch install -s",
+    "postdev": "npm run swagger",
+    "postbuild": "npm run swagger",
     "start": "npm run build && npm run serve ",
     "serve": "node -r dotenv/config build/src/server.js",
-    "build": "npm run clean && npm run build-ts && npm run swagger",
+    "build": "npm run clean && npm run build-ts",
     "watch": "npx concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\"  \"npm run watch-node\"",
     "watch-node": "nodemon -r dotenv/config  build/src/server.js",
     "clean": "rimraf ./build",
@@ -16,7 +18,7 @@
     "eslint": "eslint . --ext .js,.ts",
     "upgrade": "npm update --save-dev && npm update --save",
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose",
-    "swagger": "npx swagger-cli bundle ./src/docs/swagger.yaml --outfile ./build/src/docs/swagger.yaml --type yaml"
+    "swagger": "npx swagger-cli bundle src/docs/swagger.yaml --outfile build/src/docs/swagger.yaml --type yaml"
   
   },
   "keywords": [],
