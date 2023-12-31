@@ -4,3 +4,8 @@ export const enum IRole {
   Student = 'student',
   Parent = 'parent',
 }
+
+export const enum Duration{
+  Weekly = 'weekly',
+  Monthly = 'monthly'
+}

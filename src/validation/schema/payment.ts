@@ -15,6 +15,6 @@ export default {
     payment: Joi.alternatives().try(
       paymentDetails,
       Joi.array().items(paymentDetails),
-    ),
+    ).required(),
   }),
 };

@@ -5,7 +5,6 @@ import {
 } from '@src/core/API_Handler/ApiError';
 
 import { UserRepo } from '@src/dao/repository/UserRepo';
-import { PaymentTypes } from '@src/types/payment';
 import { IRole } from '@src/types/roles';
 import { tokenType } from '@src/types/token';
 import { IUser, IUserDoc } from '@src/types/user';
@@ -59,7 +58,3 @@ export const getDashboardKPIData = async (
     throw new BadTokenError();
   }
 };
-
-export const countPendingPaymentsPerBatchByInst = async() => {
- return  await new UserRepo().countPendingPaymentsPerBatch(PaymentTypes.Installments);
-}
