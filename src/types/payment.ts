@@ -12,7 +12,7 @@ interface IPaymentDetails{
 }
 
 export interface IPayment{
-    user: string;
+    student: string;
     paymentType: string;
     payment: IPaymentDetails[] | IPaymentDetails;
     createdAt: Date;

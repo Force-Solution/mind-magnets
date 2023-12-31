@@ -3,7 +3,6 @@ import Batch from "@src/dao/model/batch";
 import { BadRequestError } from "@src/core/API_Handler/ApiError";
 
 export class BatchRepo{
-
     public async createBatch(batchBody: IBatch):Promise<IBatchDoc>{
         if(await this.getBatchByName(batchBody.name)){
             throw new BadRequestError("Duplicate Batch Name is not allowed");
