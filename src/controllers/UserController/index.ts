@@ -45,8 +45,13 @@ export class LoginController implements AppRoute {
       const { email, password } = request.body;
       const user = await userService.loginWithEmailAndPassword(email, password);
       const tokens = await new TokenRepo().generateAuthTokens(user);
-
-      return Api.ok(request, response, { user, tokens });
+      const userDetails={
+        firstName:user.firstName,
+        lastName:user.lastName,
+        email:user.email,
+        role:user.role,
+      }
+      return Api.ok(request, response, { userDetails, tokens });
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }

@@ -38,3 +38,5 @@ export const caching = {
     process.env.CONTENT_CACHE_DURATION_MILLIS || '600000',
   ),
 };
+
+export const SWAGGER_URL='/swagger';
