@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Model } from "mongoose";
 
 interface IAddress{
@@ -17,5 +18,7 @@ export interface IStudent{
     updatedAt: Date;
 }
 
-export interface IStudentDoc extends IStudent, Document {}
+export interface IStudentDoc extends IStudent, Document {
+    _id: mongoose.Types.ObjectId;
+}
 export interface IStudentModel extends Model<IStudentDoc> {}
