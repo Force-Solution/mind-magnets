@@ -5,19 +5,16 @@ export const enum PaymentTypes{
     Lumpsum="lumpsum"
 }
 
-interface IBasePayment{
+interface IPaymentDetails{
     amount: number;
     paid: boolean;
-}
-
-interface IInstallment extends IBasePayment{
     dueDate: Date;
 }
 
 export interface IPayment{
     user: string;
     paymentType: string;
-    payment: IInstallment[] | IBasePayment;
+    payment: IPaymentDetails[] | IPaymentDetails;
     createdAt: Date;
     updatedAt: Date;
 }

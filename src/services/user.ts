@@ -3,17 +3,20 @@ import {
   BadTokenError,
   NotFoundError,
 } from '@src/core/API_Handler/ApiError';
-import Token from '@src/dao/model/token';
-import { PaymentRepo } from '@src/dao/repository/PaymentRepo';
+
 import { UserRepo } from '@src/dao/repository/UserRepo';
+import { PaymentTypes } from '@src/types/payment';
 import { IRole } from '@src/types/roles';
 import { tokenType } from '@src/types/token';
 import { IUser, IUserDoc } from '@src/types/user';
 
+import * as PaymentService from '@src/services/payment';
+import * as TokenService from '@src/services/token';
+
 export const loginWithEmailAndPassword = async (
   email: string,
   password: string,
-): Promise<IUserDoc> => {
+):Promise<IUserDoc> => {
   const user = await new UserRepo().getUserByEmail(email);
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new AuthFailureError('Incorrect email or password');
@@ -22,14 +25,15 @@ export const loginWithEmailAndPassword = async (
 };
 
 export const logout = async (refreshToken: string): Promise<void> => {
-  const refreshTokenDoc = await Token.findOne({
+  const refreshTokenDoc = await TokenService.verifyToken({
     token: refreshToken,
     type: tokenType.REFRESH,
     blacklisted: false,
   });
+
   if (!refreshTokenDoc) throw new NotFoundError();
 
-  await refreshTokenDoc.deleteOne();
+  await TokenService.deleteToken(refreshTokenDoc);
 };
 
 export const createUser = async (user: IUser): Promise<IUserDoc> => {
@@ -45,7 +49,7 @@ export const getDashboardKPIData = async (
   if (role === IRole.Admin) {
     const teachers =  await new UserRepo().countUserByRole(IRole.Teacher);
     const students =  await new UserRepo().countUserByRole(IRole.Student);
-    const pendingDueByInstallments =  await new PaymentRepo().getPaymentPendingCountForInstallments();
+    const pendingDueByInstallments =  await PaymentService.getPaymentPendingCountOfInstallments();
 
     return {teacherCount: teachers, studentCount: students, pendingDueByInstallments};
   } else if (role === IRole.Teacher) {
@@ -55,3 +59,7 @@ export const getDashboardKPIData = async (
     throw new BadTokenError();
   }
 };
+
+export const countPendingPaymentsPerBatchByInst = async() => {
+ return  await new UserRepo().countPendingPaymentsPerBatch(PaymentTypes.Installments);
+}
