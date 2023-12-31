@@ -7,7 +7,7 @@ import { Api } from '@src/core/API_Handler/ResponseHelper';
 
 export default (
     schema: Joi.AnySchema,
-    source: ValidationSource = ValidationSource.BODY,
+    source: ValidationSource = ValidationSource.BODY
   ) =>
   (request: Request, response: Response, next: NextFunction) => {
     try {

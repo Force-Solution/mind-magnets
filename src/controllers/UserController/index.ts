@@ -74,7 +74,7 @@ export class LoginController implements AppRoute {
 
       const data = await userService.getDashboardKPIData(userId, aud);
       return Api.ok(request, response, data);
-      
+
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }

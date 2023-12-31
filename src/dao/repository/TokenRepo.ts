@@ -2,9 +2,12 @@ import mongoose from 'mongoose';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import Token from '@src/dao/model/token';
 import { tokenInfo } from '@src/config/configManager';
-import { BadTokenError, TokenExpiredError } from '@src/core/API_Handler/ApiError';
+import {
+  BadTokenError,
+  TokenExpiredError,
+} from '@src/core/API_Handler/ApiError';
 import { addBearerString, constructDateFromUnix } from '@src/helper/util';
-import { ITokenDoc, tokenType } from '@src/types/token';
+import { IToken, ITokenDoc, tokenType } from '@src/types/token';
 import { IUserDoc } from '@src/types/user';
 
 export class TokenRepo {
@@ -13,7 +16,7 @@ export class TokenRepo {
     expires: number,
     type: string,
     secret: string,
-    role: string
+    role: string,
   ): string {
     /** add issuer when microservice architecture planned */
     const payload = {
@@ -26,14 +29,14 @@ export class TokenRepo {
     return jwt.sign(payload, secret);
   }
 
-  public async saveToken(
+  public saveToken(
     token: string,
     userId: mongoose.Types.ObjectId,
     expires: number,
     type: string,
     blacklisted: boolean = false,
   ): Promise<ITokenDoc> {
-    return await Token.create({
+    return Token.create({
       token,
       user: userId,
       expires: constructDateFromUnix(Date.now() + expires),
@@ -48,7 +51,7 @@ export class TokenRepo {
       tokenInfo.accessTokenValidity,
       tokenType.ACCESS,
       tokenInfo.accessTokenSecret,
-      user.role
+      user.role,
     );
 
     const refreshToken = this.generateToken(
@@ -56,10 +59,10 @@ export class TokenRepo {
       tokenInfo.refreshTokenValidity,
       tokenType.REFRESH,
       tokenInfo.refreshTokenSecret,
-      user.role
+      user.role,
     );
     await this.saveToken(
-      refreshToken,
+      addBearerString(refreshToken),
       user._id,
       tokenInfo.refreshTokenValidity,
       tokenType.REFRESH,
@@ -81,18 +84,31 @@ export class TokenRepo {
     };
   }
 
-  public async verifyToken(token: string, type: string): Promise<ITokenDoc>{
-    let payload:string | JwtPayload = "";
-    if(type === tokenType.ACCESS) payload = jwt.verify(token, tokenInfo.accessTokenSecret);
-    else if(type === tokenType.REFRESH) payload = jwt.verify(token, tokenInfo.refreshTokenSecret);
+  public findToken(token: Partial<IToken>): Promise<ITokenDoc | null> {
+    return Token.findOne(token);
+  }
 
-    if(typeof payload.sub !== "string") throw new BadTokenError();
+  public deleteToken(token: ITokenDoc): Promise<void> {
+    return token.deleteOne();
+  }
 
-    const tokenDoc = await Token.findOne({
-        token,type,user:payload.sub, blacklisted: false
+  public async verifyToken(token: string, type: string): Promise<ITokenDoc> {
+    let payload: string | JwtPayload = '';
+    if (type === tokenType.ACCESS)
+      payload = jwt.verify(token, tokenInfo.accessTokenSecret);
+    else if (type === tokenType.REFRESH)
+      payload = jwt.verify(token, tokenInfo.refreshTokenSecret);
+
+    if (typeof payload.sub !== 'string') throw new BadTokenError();
+
+    const tokenDoc = await this.findToken({
+      token,
+      type,
+      user: payload.sub,
+      blacklisted: false,
     });
 
-    if(!tokenDoc) throw new TokenExpiredError();
+    if (!tokenDoc) throw new TokenExpiredError();
 
     return tokenDoc;
   }
