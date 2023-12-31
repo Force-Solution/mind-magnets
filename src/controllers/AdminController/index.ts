@@ -27,10 +27,6 @@ export class AdminController implements AppRoute {
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
-      (req, res, next) =>{
-        console.log(req.body);
-        next();
-      },
       validator(StudentSchema),
       this.addStudent,
     );
