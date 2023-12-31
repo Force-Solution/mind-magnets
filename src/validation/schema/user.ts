@@ -35,4 +35,11 @@ export default {
       .required()
       .pattern(/^Bearer\s+\S+$/),
   }).unknown(true), // remove this as security descreases
+  params: Joi.object().keys({
+    page: Joi.number().positive(),
+    size: Joi.number().positive(),
+    sort: Joi.string(),
+    search: Joi.string(),
+    filter: Joi.string()
+  })
 };
