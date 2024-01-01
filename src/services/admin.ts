@@ -13,13 +13,17 @@ import * as BatchService from '@src/services/batch';
 export const createStudent = async (
   student: IUser & IStudent & IPayment,
 ): Promise<(IUserDoc | IStudentDoc | IPaymentDoc)[]> => {
-  const batch = await BatchService.getBatchByName(student.batch);
+  const batch = await BatchService.getBatchByName(student.batch.toString());
   if (!batch) throw new BadRequestError('Batch Name not Found');
-  student.batch = batch._id.toString();
+  student.batch = batch._id;
 
   const user = await userService.createUser(student);
-  const createdStudent = await studentService.createStudent(student, user);
-  const payment = await paymentService.savePayment(student, createdStudent);
+  const payment = await paymentService.savePayment(student);
+  const createdStudent = await studentService.createStudent(
+    student,
+    user,
+    payment,
+  );
 
   return Promise.all([user, createdStudent, payment]);
 };
@@ -43,20 +47,23 @@ export const getStudentMissedInstBatchWise = async (): Promise<
 
 export const getFilteredUsers = async (
   duration: string,
-): Promise<
-  [
-    {
-      label: string;
-      count: number;
-    }[],
-    {
-      label: string;
-      count: number;
-    }[],
-  ]
-> => {
+): Promise<{
+  students: {
+    label: string;
+    count: number;
+  }[];
+  teachers: {
+    label: string;
+    count: number;
+  }[];
+}> => {
   const students = await studentService.getStudentsData(duration);
   const teachers = await teacherService.getTeachersData(duration);
 
-  return Promise.all([students, teachers]);
+  const result = {
+    students,
+    teachers,
+  };
+
+  return result;
 };

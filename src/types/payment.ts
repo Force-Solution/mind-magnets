@@ -1,4 +1,5 @@
-import { Model } from "mongoose";
+import mongoose from "mongoose";
+import {Document, Model } from "mongoose";
 
 export const enum PaymentTypes{
     Installments="installments",
@@ -12,12 +13,13 @@ interface IPaymentDetails{
 }
 
 export interface IPayment{
-    student: string;
     paymentType: string;
     payment: IPaymentDetails[] | IPaymentDetails;
     createdAt: Date;
     updatedAt: Date;
 }
 
-export interface IPaymentDoc extends IPayment, Document {}
+export interface IPaymentDoc extends IPayment, Document {
+    _id: mongoose.Types.ObjectId
+}
 export interface IPaymentModel extends Model<IPaymentDoc> {}

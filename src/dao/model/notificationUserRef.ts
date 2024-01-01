@@ -7,12 +7,12 @@ import { Schema, model } from 'mongoose';
 const schema = new Schema<INotificationUserRefDoc, INotificationUserRefModel>(
   {
     user: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
       ref: 'User',
     },
     notification: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
       ref: 'Notification',
     },
