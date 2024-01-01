@@ -2,11 +2,6 @@ import { IPaymentDoc, IPaymentModel, PaymentTypes } from '@src/types/payment';
 import mongoose, { Schema, model } from 'mongoose';
 
 const schema = new mongoose.Schema<IPaymentDoc, IPaymentModel>({
-  student: {
-    type: String,
-    ref: 'Student',
-    required: true,
-  },
   paymentType: {
     type: String,
     required: true,

@@ -1,52 +1,57 @@
+// ! in this file, we are following the JSON format, please stick with it. 
+//! Since the agregate framework accepts JSON Format. Means use "" instead of ''
+// * for Tables use 
+// Batch -> batches
+// Payment -> payments
+// Users -> users
+
 export const getPendingPaymentsPerBatch = (paymentType: string) => {
     return  [
         {
           $lookup: {
-            from: 'Batch',
-            localField: 'batch',
-            foreignField: '_id',
-            as: 'studentBatchCombined',
+            from: "batches",
+            localField: "batch",
+            foreignField: "_id",
+            as: "studentBatchCombined",
           },
         },
         {
-          $unwind: '$studentBatch',
+          $unwind: "$studentBatchCombined",
         },
         {
           $lookup: {
-            from: 'Payment',
-            localField: '_id',
-            foreignField: 'student',
-            as: 'pendingPayment',
+            from: "payments",
+            localField: "payment",
+            foreignField: "_id",
+            as: "pendingPayment",
           },
         },
         {
-          $unwind: '$pendingPayment',
+          $unwind: "$pendingPayment",
         },
         {
-          $unwind: {
-            path: '$payment',
-          },
+          $unwind: "$pendingPayment.payment"
         },
         {
           $match: {
-            paymentType: paymentType,
-            'pendingPayment.paid': false,
-            'pendingPayment.dueDate': { $lte: new Date() },
+            "pendingPayment.paymentType": paymentType,
+            "pendingPayment.payment.paid": false,
+            "pendingPayment.payment.dueDate": { $lte: new Date() },
           },
         },
-        { $group: { _id: '$studentBatchCombined', count: { $sum: 1 } } },
-        { $project: { _id: 0, batch: '$_id', count: '$count' } },
+        { $group: { _id: "$studentBatchCombined.name", count: { $sum: 1 } } },
+        { $project: { _id: 0, batch: "$_id", count: "$count"} },
       ];
 }
 
 export const getWeeklyDataOfUserJoined = (
   lastWeekStartDate: Date,
   currentDate: Date,
-): any[] => {
+) => {
   return [
     {
       $match: {
-        createdAt: { $gte: lastWeekStartDate, $lt: currentDate },
+        createdAt: { $gt: lastWeekStartDate, $lte: currentDate },
       },
     },
     {
@@ -75,6 +80,9 @@ export const getWeeklyDataOfUserJoined = (
         count: 1,
       },
     },
+    {
+      $sort: { label: -1 }
+    }
   ];
 };
 
@@ -90,7 +98,7 @@ export const getMonthlyDataOfUserJoined = (
     },
     {
       $group: {
-        _id: { $dayOfMonth: '$createdAt' },
+        _id: { $month: '$createdAt' },
         count: { $sum: 1 },
       },
     },
@@ -119,5 +127,8 @@ export const getMonthlyDataOfUserJoined = (
         count: 1,
       },
     },
+    {
+      $sort: { label: -1 }
+    }
   ];
 };

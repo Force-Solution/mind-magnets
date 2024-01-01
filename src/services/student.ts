@@ -1,6 +1,6 @@
 import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { StudentRepo } from '@src/dao/repository/StudentRepo';
-import { PaymentTypes } from '@src/types/payment';
+import { IPaymentDoc, PaymentTypes } from '@src/types/payment';
 import { Duration } from '@src/types/roles';
 import { IStudent, IStudentDoc } from '@src/types/student';
 import { IUserDoc } from '@src/types/user';
@@ -8,10 +8,12 @@ import { IUserDoc } from '@src/types/user';
 export const createStudent = async (
   student: IStudent,
   user: IUserDoc,
+  payment: IPaymentDoc
 ): Promise<IStudentDoc> => {
   const payload = {
     ...student,
-    user: user._id.toString(),
+    user: user._id,
+    payment: payment._id
   };
   return await new StudentRepo().saveStudent(payload);
 };
@@ -25,5 +27,7 @@ export const getStudentsData = async(duration: string) => {
 }
 
 export const countPendingPaymentsPerBatchByInst = async() => {
-  return  await new StudentRepo().countPendingPaymentsPerBatch(PaymentTypes.Installments);
- }
+  const d =   await new StudentRepo().countPendingPaymentsPerBatch(PaymentTypes.Installments);
+  console.log(d);
+  return d;
+}
