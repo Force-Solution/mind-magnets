@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Model } from "mongoose";
+import {Document, Model } from "mongoose";
 
 interface IAddress{
     location: string;
@@ -8,8 +8,9 @@ interface IAddress{
 }
 
 export interface IStudent{
-    user: string;
-    batch: string;
+    user: mongoose.Types.ObjectId;
+    batch: mongoose.Types.ObjectId;
+    payment: mongoose.Types.ObjectId;
     dateOfJoin: Date;
     address: IAddress;
     parentName: string;

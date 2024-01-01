@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 
 const schema = new Schema<ITeacherDoc, ITeacherModel>({
     user:{
-        type: String,
+        type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },

@@ -67,6 +67,7 @@ export class AdminController implements AppRoute {
   private async addTeacher(request: Request, response: Response): Promise<any> {
     try {
       await adminService.createTeacher(request.body);
+      return Api.created(request, response, "Teacher Created");
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
@@ -88,14 +89,15 @@ export class AdminController implements AppRoute {
     request: Request,
     response: Response,
   ): Promise<any> {
-    const { filter: duration } = request.query;
     try {
+      const { filter: duration } = request.query;
       if (typeof duration !== 'string')
         throw new BadRequestError('Invalid Params');
 
       const data = await adminService.getFilteredUsers(duration);
       return Api.ok(request, response, data);
     } catch (error) {
+      console.log(error)
       ErrorBoundary.catchError(request, response, error);
     }
   }
