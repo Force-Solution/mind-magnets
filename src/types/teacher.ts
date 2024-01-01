@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import { Model } from "mongoose";
 
 export interface ITeacher{
-    user: string;
+    user: mongoose.Types.ObjectId;
     department: string;
     post: string;
     createdAt: Date;

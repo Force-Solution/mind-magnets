@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Model } from "mongoose";
 
 export interface INotifications{
@@ -15,8 +16,8 @@ export interface INotificationsModel extends Model<INotificationsDoc> {}
 
 
 export interface INotificationUserRef{
-    notification: string;
-    user: string;
+    notification: mongoose.Types.ObjectId;
+    user: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }

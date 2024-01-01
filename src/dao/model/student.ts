@@ -5,14 +5,19 @@ import { validateEmail } from '@src/helper/util';
 const schema = new Schema<IStudentDoc, IStudentModel>(
   {
     user: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
     batch: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
       ref: 'Batch'
+    },
+    payment:{
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Payment'
     },
     dateOfJoin: {
       type: Date,
