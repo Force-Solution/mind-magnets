@@ -1,24 +1,154 @@
 openapi: 3.0.0
 info:
-  title: Sample API
-  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  title: Aapni Coaching
+  description: This is backend following MVC architecture of Apni-Coaching server.
   version: 0.1.9
 servers:
-  - url: http://api.example.com/v1
-    description: Optional server description, e.g. Main (production) server
-  - url: http://staging-api.example.com
-    description: Optional server description, e.g. Internal staging server for testing
+  - url: http://localhost:80
+    description: This is the local server.
 paths:
-  /users:
-    get:
-      summary: Returns a list of users.
-      description: Optional extended description in CommonMark or HTML.
+  /api/v1/user/login:
+    post:
+      summary: Endpoint to log in a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: User credentials
+          required: true
+          schema:
+            $ref: '#/components/schemas/LoginCredentials'
       responses:
-        '200':    # status code
-          description: A JSON array of user names
+        200:
+          description: Successfully logged in
           content:
             application/json:
-              schema: 
-                type: array
-                items: 
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        # Add other response codes as needed
+
+  /api/v1/user/logout:
+    post:
+      summary: Endpoint to log out a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: User logout details
+          required: true
+          schema:
+            type: object
+            properties:
+              refreshToken:
+                type: string
+      responses:
+        204:
+          description: Successfully logged out
+        # Add other response codes as needed
+
+  /api/v1/user/create:
+    post:
+      summary: Endpoint to create a new user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: User creation details
+          required: true
+          schema:
+            $ref: '#/components/schemas/CreateUserDetails'
+      responses:
+        201:
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        # Add other response codes as needed
+
+components:
+  schemas:
+    LoginCredentials:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        userDetails:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+        tokens:
+          type: object
+          properties:
+            access:
+              type: object
+              properties:
+                token:
                   type: string
+                expires:
+                  type: string
+                  format: date-time
+            refresh:
+              type: object
+              properties:
+                token:
+                  type: string
+                expires:
+                  type: string
+                  format: date-time
+
+    CreateUserDetails:
+      type: object
+      properties:
+        userName:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+        # Add other properties for user creation
+
+    UserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        user:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
