@@ -1,5 +1,6 @@
 import { BadRequestError } from "@src/core/API_Handler/ApiError";
 import { TeacherRepo } from "@src/dao/repository/TeacherRepo";
+import { IRequest } from "@src/types/request";
 import { Duration } from "@src/types/roles";
 import { ITeacher, ITeacherDoc } from "@src/types/teacher";
 import { IUserDoc } from "@src/types/user";
@@ -17,5 +18,10 @@ export const getTeachersData = async(duration: string) => {
       throw new BadRequestError('Duration is not valid');
     }
   
-    return await new TeacherRepo().countStudentsByDuration(duration); 
+    return await new TeacherRepo().countTeachersByDuration(duration); 
   }
+
+export const getTeachersList = async(payload: IRequest) => {
+  const data = await new TeacherRepo().getAllTeacherData(payload);
+  console.log(data);
+}

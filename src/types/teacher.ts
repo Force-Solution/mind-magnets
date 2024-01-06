@@ -11,15 +11,3 @@ export interface ITeacher{
 
 export interface ITeacherDoc extends ITeacher, Document {}
 export interface ITeacherModel extends Model<ITeacherDoc> {}
-
-export const enum Department{
-    Physics = "physics",
-    Chemistry = "chemistry",
-    Mathematics = "mathematics",
-    Biology = "biology",
-}
-
-export const enum Post{
-    Professor = "professor",
-    AssitantProfessor = "assitantProfessor"
-}
