@@ -4,3 +4,11 @@ export const enum ValidationSource {
   QUERY = 'query',
   PARAM = 'params',
 }
+
+export interface IRequest{
+  page: string;
+  size: string;
+  search: string;
+  sort: string;
+  order: string;
+}

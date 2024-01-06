@@ -1,4 +1,4 @@
-import { Department, ITeacherDoc, ITeacherModel, Post } from '@src/types/teacher';
+import { ITeacherDoc, ITeacherModel } from '@src/types/teacher';
 import { Schema, model } from 'mongoose';
 
 const schema = new Schema<ITeacherDoc, ITeacherModel>({
@@ -12,14 +12,12 @@ const schema = new Schema<ITeacherDoc, ITeacherModel>({
         required:true,
         index:true,
         trim:true,
-        enum: [Department.Physics, Department.Chemistry, Department.Mathematics, Department.Biology]
     },
     post:{
         type:String,
         required:true,
         index:true,
         trim:true,
-        enum: [Post.Professor, Post.AssitantProfessor]
     }
 }, {timestamps: true});
 

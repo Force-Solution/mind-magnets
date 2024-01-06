@@ -11,6 +11,7 @@ import { IUser, IUserDoc } from '@src/types/user';
 
 import * as PaymentService from '@src/services/payment';
 import * as TokenService from '@src/services/token';
+import { PaymentTypes } from '@src/types/payment';
 
 export const loginWithEmailAndPassword = async (
   email: string,
@@ -48,7 +49,7 @@ export const getDashboardKPIData = async (
   if (role === IRole.Admin) {
     const teachers =  await new UserRepo().countUserByRole(IRole.Teacher);
     const students =  await new UserRepo().countUserByRole(IRole.Student);
-    const pendingDueByInstallments =  await PaymentService.getPaymentPendingCountOfInstallments();
+    const pendingDueByInstallments =  await PaymentService.getPaymentPendingCountByType(PaymentTypes.Installments);
 
     return {teacherCount: teachers, studentCount: students, pendingDueByInstallments};
   } else if (role === IRole.Teacher) {
