@@ -18,6 +18,7 @@ export const catchError = (
   response: Response,
   error: ApiError | any,
 ) => {
+  console.log(error);
     AppLogger.error("Error Occured while processing request", error.getErrorMsg() || error.message);
   if (
     error instanceof AuthFailureError ||
