@@ -1,4 +1,4 @@
-import { IPayment, IPaymentDoc, PaymentTypes } from '@src/types/payment';
+import { IPayment, IPaymentDoc } from '@src/types/payment';
 import Payment from '@src/dao/model/payment';
 
 export class PaymentRepo {
@@ -6,9 +6,9 @@ export class PaymentRepo {
     return  Payment.create(payment);
   }
 
-  public getPaymentPendingCountForInstallments(): Promise<Number> {
+  public getPaymentPendingCountByType(type: string): Promise<Number> {
     return Payment.countDocuments({
-      paymentType: PaymentTypes.Installments,
+      paymentType: type,
       'payment.paid': false,
       'payment.dueDate': { $lt: new Date() },
     });
