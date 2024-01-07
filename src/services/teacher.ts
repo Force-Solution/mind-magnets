@@ -30,9 +30,9 @@ export const getTeachersList = async (
   const response = await new TeacherRepo().getAllTeacherData(payload);
   return {
     data: response[0].data,
-    totalElements: response[0]?.metadata[0]?.totalCount ?? 0,
+    totalElements: response[0].metadata[0].totalCount ?? 0,
     totalPages: Math.ceil(
-      response[0]?.metadata[0]?.totalCount ?? 0 / parseInt(payload.size),
+      parseInt(response[0].metadata[0].totalCount ?? 0) / parseInt(payload.size),
     ),
   };
 };
