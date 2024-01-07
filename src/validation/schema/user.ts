@@ -30,16 +30,19 @@ export default {
   logout: Joi.object().keys({
     refreshToken: Joi.string().required(),
   }),
-  auth: Joi.object().keys({
-    authorization: Joi.string()
-      .required()
-      .pattern(/^Bearer\s+\S+$/),
-  }).unknown(true), // remove this as security descreases
+  auth: Joi.object()
+    .keys({
+      authorization: Joi.string()
+        .required()
+        .pattern(/^Bearer\s+\S+$/),
+    })
+    .unknown(true), // remove this as security descreases
   params: Joi.object().keys({
-    page: Joi.number().positive(),
-    size: Joi.number().positive(),
-    sort: Joi.string(),
-    search: Joi.string(),
-    filter: Joi.string()
-  })
+    page: Joi.number().min(1),
+    size: Joi.number().min(1),
+    sort: Joi.string().optional(),
+    search: Joi.string().optional(),
+    order: Joi.string(),
+    filter: Joi.string(),
+  }),
 };

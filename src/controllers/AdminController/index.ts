@@ -78,7 +78,7 @@ export class AdminController implements AppRoute {
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
-      validator(user.params, ValidationSource.PARAM),
+      validator(user.params, ValidationSource.QUERY),
       this.getTeacherList,
     );
   }
@@ -153,17 +153,24 @@ export class AdminController implements AppRoute {
   ): Promise<any> {
     try {
       const { page, size, search, sort, order } = request.query;
-      if (![page, size, search, sort, order].every((param) => typeof param === 'string')) throw new BadRequestError('Invalid Params');
+      if (
+        ![page, size, search, sort, order].every(
+          (param) => typeof param === 'string',
+        )
+      )
+        throw new BadRequestError('Invalid Params');
       const payload: IRequest = {
         page: page as string,
         size: size as string,
         search: search as string,
         sort: sort as string,
         order: order as string,
-    };
-      await adminService.getTeachersListData(payload);
-
-    } catch (error) {}
+      };
+      const data = await adminService.getTeachersListData(payload);
+      return Api.ok(request, response, data);
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
   }
 
   // public async getCustomers(
