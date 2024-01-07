@@ -5,6 +5,7 @@
 // Payment -> payments
 // Users -> users
 export interface IOptions {
+  searchBy?: string;
   sortBy?: string;
   projectBy?: string;
   limit?: number;
@@ -12,6 +13,27 @@ export interface IOptions {
 }
 export const paginate = (prevPipeline: any[], options: IOptions) => {
   const dataPipeline = [...prevPipeline];
+  const countPipelineWhenSearch = [];
+  let havingSearchParam = false;
+
+
+  if (options.searchBy) {
+    const searchCriteria: any = {};
+    options.searchBy.split(',').forEach((searchOption: string) => {
+      const [field, searchString, searchOptionStr] = searchOption.split(':');
+
+      if (searchString.length > 0) {
+        searchCriteria[field] = {
+          $regex: searchString,
+          $options: searchOptionStr,
+        };
+      }
+    });
+    if (Object.keys(searchCriteria).length > 0) {
+      havingSearchParam = !havingSearchParam;
+      dataPipeline.push({ $match: searchCriteria });
+    }
+  } 
 
   if (options.sortBy) {
     const sortingCriteria: any = {};
@@ -31,23 +53,40 @@ export const paginate = (prevPipeline: any[], options: IOptions) => {
       const [key, include] = projectOption.split(':');
       projectionCriteria[key] = include === 'hide' ? 0 : 1;
     });
+    
     dataPipeline.push({ $project: projectionCriteria });
   } else {
     dataPipeline.push({ $project: { createdAt: 0, updatedAt: 0 } });
   }
 
   // Pagination
-  const limit = options.limit && parseInt(options.limit.toString(), 10) > 0 ? parseInt(options.limit.toString(), 10) : 10;
-  const page = options.page && parseInt(options.page.toString(), 10) > 0 ? parseInt(options.page.toString(), 10) : 1;
+  const limit =
+    options.limit && parseInt(options.limit.toString(), 10) > 0
+      ? parseInt(options.limit.toString(), 10)
+      : 10;
+  const page =
+    options.page && parseInt(options.page.toString(), 10) > 0
+      ? parseInt(options.page.toString(), 10)
+      : 1;
   const skip = (page - 1) * limit;
-  dataPipeline.push({ $skip: skip }, { $limit: limit });
+  if(havingSearchParam){
+    countPipelineWhenSearch.push(...dataPipeline);
+    countPipelineWhenSearch.push({ $count: 'totalCount' });
+    countPipelineWhenSearch.push({ $project: { totalCount: { $ifNull: ['$totalCount', 0] } } });
+    // countPipelineWhenSearch.push({ $project: { totalCount: 0 } });
+  }
 
-  return [{
-    $facet: {
-      metadata: [{ $count: 'totalCount' }],
-      data: dataPipeline,
+  dataPipeline.push({ $skip: skip }, { $limit: limit });
+  
+
+  return [
+    {
+      $facet: {
+        metadata: havingSearchParam ? countPipelineWhenSearch : [{ $count: 'totalCount' }],
+        data: dataPipeline,
+      },
     },
-  }];
+  ];
 };
 
 export const getPendingPaymentsPerBatch = (paymentType: string) => {
