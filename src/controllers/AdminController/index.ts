@@ -103,6 +103,8 @@ export class AdminController implements AppRoute {
 
   private async createPost(request: Request, response: Response): Promise<any> {
     try {
+       await adminService.createPost(request.body);
+       return Api.created(request, response, 'Post Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
@@ -113,6 +115,8 @@ export class AdminController implements AppRoute {
     response: Response,
   ): Promise<any> {
     try {
+      await adminService.createDepartment(request.body);
+      return Api.created(request, response, 'Department Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
