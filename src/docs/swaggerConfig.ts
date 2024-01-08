@@ -5,6 +5,6 @@ const swaggerDefinitions = YAML.load(path.join(__dirname, 'swagger.yaml'));
 const options = {
   swaggerDefinition: swaggerDefinitions,
 
-  apis: ['./src/controllers/*.ts'],
+  apis: ['./controllers/*.ts'],
 };
 export const specs = swaggerJsdoc(options);

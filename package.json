@@ -19,13 +19,13 @@
     "upgrade": "npm update --save-dev && npm update --save",
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose",
     "swagger": "npx swagger-cli bundle src/docs/swagger.yaml --outfile build/src/docs/swagger.yaml --type yaml"
-  
   },
   "keywords": [],
   "author": "Deepak Yadav, Mulayam Singh Yadav",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/mongoose": "^5.11.97",
@@ -52,6 +52,7 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
