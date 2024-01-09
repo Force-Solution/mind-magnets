@@ -1,7 +1,7 @@
 import mongoose, { Model, Document } from 'mongoose';
 
 export interface IPost {
-  name: string;
+  post: string;
   createdAt: Date;
   updatedAt: Date;
 }

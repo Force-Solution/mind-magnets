@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { Model } from "mongoose";
 
 export interface INotifications{
+    sender: mongoose.Types.ObjectId;
+    receiver: mongoose.Types.ObjectId;
     role: string; // kis role se aayi hai
     message: string;
     read: boolean;
@@ -15,16 +17,6 @@ export interface INotificationsDoc extends INotifications, Document {}
 export interface INotificationsModel extends Model<INotificationsDoc> {}
 
 
-export interface INotificationUserRef{
-    notification: mongoose.Types.ObjectId;
-    user: mongoose.Types.ObjectId;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-export interface INotificationUserRefDoc extends INotificationUserRef, Document {}
-export interface INotificationUserRefModel extends Model<INotificationUserRefDoc> {}
-
 export const enum Priority{
     Highest = "highest",
     High = "high",
@@ -33,6 +25,6 @@ export const enum Priority{
 }
 
 export enum NotificationType{
-
+    USER_ADDITION = "User_Addition"
 }
 
