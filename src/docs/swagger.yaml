@@ -35,7 +35,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserLogin'
         required: true
       responses:
         '200':
@@ -49,16 +49,48 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/401ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Pet not found
         '405':
           description: Validation exception
       security:
         - bearerAuth: []
+  /user/create:
+    post:
+      tags:
+        - User Controller
+      summary: create user (ADMIN)
+      description: Route for user creation (only in development).
+      operationId: createUser
+      requestBody:
+        description: Requested User Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUserADMIN'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string          
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+      security:
+        - bearerAuth: []
+        
 components:
   schemas:
-    User:
+    UserLogin:
       type: object
       properties:
         email:
@@ -67,6 +99,27 @@ components:
         password:
           type: string
           example: Password1!
+    createUserADMIN:
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: Password1!
+        firstName:
+          type: string
+          example: john
+        lastName:
+          type: string
+          example: day
+        role:
+          type: string
+          example: admin
+        username:
+          type: string
+          example: apniCoachingAdmin
     
     LoginResponse:
       type: object
@@ -102,7 +155,7 @@ components:
                   type: string
                   format: date-time
 
-    401ErrorResponse:
+    ErrorResponse:
       type: object
       properties:
         message:
@@ -131,7 +184,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/UserLogin'
   securitySchemes:
     bearerAuth:            
       type: http
