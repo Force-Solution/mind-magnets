@@ -3,7 +3,7 @@ import mongoose, { Schema, model } from 'mongoose';
 
 const schema = new Schema<IPostDoc, IPostModel>(
   {
-    name: {
+    post: {
       type: String,
       required: true,
       unique: true,

@@ -43,7 +43,6 @@ export class LoginController implements AppRoute {
   ): Promise<any> {
     try {
       const { email, password } = request.body;
-      console.log(email, password)
       const user = await userService.loginWithEmailAndPassword(email, password);
       const tokens = await new TokenRepo().generateAuthTokens(user);
       const userDetails={
