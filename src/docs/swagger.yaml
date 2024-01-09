@@ -56,6 +56,72 @@ paths:
           description: Validation exception
       security:
         - bearerAuth: []
+  /user/create:
+    post:
+      tags:
+        - User Controller
+      summary: create user
+      description: Route for user to create in the application.
+      operationId: createUser
+      requestBody:
+        description: Requested user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUserResponse'          
+        '401':
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorResponse'
+        '404':
+          description: Pet not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []
+  /user/logout:
+    post:
+      tags:
+        - User Controller
+      summary: logout user
+      description: Route for user to logout in the application.
+      operationId: logoutUser
+      requestBody:
+        description: Requested user object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutUser'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutUserResponse'          
+        '401':
+          description: Invalid email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/401ErrorResponse'
+        '404':
+          description: Pet not found
+        '405':
+          description: Validation exception
+      security:
+        - bearerAuth: []
 components:
   schemas:
     User:
@@ -101,7 +167,87 @@ components:
                 expires:
                   type: string
                   format: date-time
-
+    CreateUser:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john123
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: team@apnicoacing.com
+        password:
+          type: string
+          example: Password1!
+        role:
+          type: string
+          example: admin
+    CreateUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: User created successfully
+        user:
+          type: object
+          properties:
+            username:
+              type: string
+              example: john123
+            firstName:
+              type: string
+              example: John
+            lastName:
+              type: string
+              example: Doe
+            email:
+              type: string
+              example:
+            role:
+              type: string
+              example: admin
+            isEmailVerified:
+              type: boolean
+              example: false
+            password:
+              type: string
+              example: Password1!
+            id:
+              type: string
+              example: 5f9b3b3b5f9b3b3b5f9b3b3b
+            userId:
+              type: number
+              example: 12
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:  
+              type: string
+              format: date-time
+    LogoutUser:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NTg0MGRlZDA0N2Y3ZGUyYWU1NmY2ZTYiLCJpYXQiOjE3MDQ4MTcxNDU1NDAsImV4cCI6MTcwNzQwOTE0NTU0MCwiYXVkIjoiYWRtaW4iLCJ0eXBlIjoicmVmcmVzaCJ9.93iDfEmf9sZU-MlGWnCdmcbQ-k5MAEbAN7z2rfv4fIo
+    LogoutUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: User logged out successfully
+        user:
+          type: object
+          properties:
+            message:
+              type: string
+              example: User logged out successfully         
     401ErrorResponse:
       type: object
       properties:
