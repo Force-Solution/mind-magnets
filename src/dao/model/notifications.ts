@@ -9,6 +9,16 @@ import { Schema, model } from 'mongoose';
 
 const schema = new Schema<INotificationsDoc, INotificationsModel>(
   {
+    sender:{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    receiver:{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     role: {
       type: String,
       required: true,
