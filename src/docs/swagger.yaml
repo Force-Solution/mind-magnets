@@ -22,6 +22,8 @@ servers:
 tags:
   - name: User Controller
     description: Operations about user
+  - name: Admin Controller
+    description: Operations about admin
 paths:
   /user/login:
     post:
@@ -35,7 +37,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/LoginUser'
         required: true
       responses:
         '200':
@@ -49,7 +51,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/401ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Pet not found
         '405':
@@ -71,22 +73,24 @@ paths:
               $ref: '#/components/schemas/CreateUser'
         required: true
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description:  User created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateUserResponse'          
-        '401':
-          description: Invalid email or password
+        '400':
+          description: Paramater missing or invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/401ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Pet not found
+          description: Rote not found
         '405':
           description: Validation exception
+        '500':
+          description: Internal server error
       security:
         - bearerAuth: []
   /user/logout:
@@ -104,27 +108,221 @@ paths:
               $ref: '#/components/schemas/LogoutUser'
         required: true
       responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LogoutUserResponse'          
+        '204':
+          description: Logout user successfully
         '401':
-          description: Invalid email or password
+          description: Invalid tokens
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/401ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Pet not found
+          description: Route not found
         '405':
           description: Validation exception
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /admin/create/student:
+    post:
+      tags:
+        - Admin Controller
+      summary: create student
+      description: Route for admin to create student in the application.
+      operationId: createStudent
+      requestBody:
+        description: Requested student object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStudent'
+        required: true
+      responses:
+        '201':
+          description:  Student created successfully          
+        '400':
+          description: Paramater missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Route not found
+        '405':
+          description: Validation exception
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /admin/create/teacher:
+    post:
+      tags:
+        - Admin Controller
+      summary: create teacher
+      description: Route for admin to create teacher in the application.
+      operationId: createTeacher
+      requestBody:
+        description: Requested teacher object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeacher'
+        required: true
+      responses:
+        '201':
+          description:  Teacher created successfully          
+        '400':
+          description: Paramater missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Route not found
+        '405':
+          description: Validation exception
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /admin/create/post:
+    post:
+      tags:
+        - Admin Controller
+      summary: create post
+      description: Route for admin to create post in the application.
+      operationId: createPost
+      requestBody:
+        description: Requested post object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+        required: true
+      responses:
+        '201':
+          description:  Post created successfully          
+        '400':
+          description: Paramater missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Route not found
+        '405':
+          description: Validation exception
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /admin//create/department:
+    post:
+      tags:
+        - Admin Controller
+      summary: create department
+      description: Route for admin to create department in the application.
+      operationId: createDepartment
+      requestBody:
+        description: Requested department object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDepartment'
+        required: true
+      responses:
+        '201':
+          description:  Department created successfully          
+        '400':
+          description: Paramater missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Route not found
+        '405':
+          description: Validation exception
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /admin/getUsersAddedList:
+    get:
+      tags:
+        - Admin Controller
+      summary: get users added list
+      description: Route for admin to get users added list in the application.
+      operationId: getUsersAddedList
+      responses:
+        '200':
+          description:  Users added list fetched successfully          
+        '400':
+          description: Paramater missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Route not found
+        '405':
+          description: Validation exception
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /admin/students/missed-installments/batch-wise:
+    get:
+      tags:
+        - Admin Controller
+      summary: get students missed installments batch wise
+      description: Route for admin to get students missed installments batch wise in the application.
+      operationId: getStudentsMissedInstallmentsBatchWise
+      responses:
+        '200':
+          description:  Students missed installments batch wise fetched successfully          
+        '400':
+          description: Paramater missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Route not found
+        '405':
+          description: Validation exception
+        '500':
+          description: Internal server error
+      security:
+        - bearerAuth: []
+  /admin/getTeachersList:
+    get:
+      tags:
+        - Admin Controller
+      summary: get teachers list
+      description: Route for admin to get teachers list in the application.
+      operationId: getTeachersList
+      responses:
+        '200':
+          description:  Teachers list fetched successfully          
+        '400':
+          description: Paramater missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Route not found
+        '405':
+          description: Validation exception
+        '500':
+          description: Internal server error
       security:
         - bearerAuth: []
 components:
   schemas:
-    User:
+    LoginUser:
       type: object
       properties:
         email:
@@ -235,20 +433,87 @@ components:
       properties:
         refreshToken:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NTg0MGRlZDA0N2Y3ZGUyYWU1NmY2ZTYiLCJpYXQiOjE3MDQ4MTcxNDU1NDAsImV4cCI6MTcwNzQwOTE0NTU0MCwiYXVkIjoiYWRtaW4iLCJ0eXBlIjoicmVmcmVzaCJ9.93iDfEmf9sZU-MlGWnCdmcbQ-k5MAEbAN7z2rfv4fIo
-    LogoutUserResponse:
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NTg0MGRlZDA0N2Y3ZGUyYWU1NmY2ZTYiLCJpYXQiOjE3MDQ4MTcxNDU1NDAsImV4cCI6MTcwNzQwOTE0NTU0MCwiYXVkIjoiYWRtaW4iLCJ0eXBlIjoicmVmcmVzaCJ9.93iDfEmf9sZU-MlGWnCdmcbQ-k5MAEbAN7z2rfv4fIo        
+    CreateStudent:
       type: object
       properties:
-        message:
+        username:
           type: string
-          description: User logged out successfully
-        user:
+          example: john123
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: team@apnicoacing.com
+        password:
+          type: string
+          example: Password1!
+        role:
+          type: string
+          example: admin
+        batch:
+          type: string
+          example: Alpha
+        address:
           type: object
           properties:
-            message:
+            location:
               type: string
-              example: User logged out successfully         
-    401ErrorResponse:
+              example: 123, New York
+            state:
+              type: string
+              example: 123, New York
+            zip:
+              type: number
+              example: 123
+        parentName:
+          type: string
+          example: John Doe
+        parentEmail:
+          type: string
+          example: jon@google.com
+        payment:
+          type: number
+          example: 1000
+
+    CreateTeacher:
+      type: object
+      properties:
+        username:
+          type: string
+          example: john123
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: team@apnicoacing.com
+        password:
+          type: string
+          example: Password1!
+        role:
+          type: string
+          example: admin
+        post:
+          type: string
+          example: Teacher
+        department:
+          type: string
+          example: Physics
+    CreatePost:
+      type: string
+      example: Teacher    
+    CreateDepartment:
+      type: string
+      example: Physics
+    ErrorResponse:
       type: object
       properties:
         message:
@@ -257,8 +522,6 @@ components:
         error:
           type: string
           description: Incorrect email or password
-        
-    
     ApiResponse:
       type: object
       properties:
@@ -277,7 +540,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/LoginUser'
   securitySchemes:
     bearerAuth:            
       type: http
