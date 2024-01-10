@@ -15,7 +15,7 @@ export class LoginController implements AppRoute {
   public router: Router = Router();
 
   constructor() {
-    this.router.post('/login', (req, _res, next) => {console.log(req.body); next()},validator(user.credential), this.getLoggedIn);
+    this.router.post('/login', validator(user.credential), this.getLoggedIn);
     this.router.post('/logout', validator(user.logout), this.getLoggedOut);
     this.router.post('/create', validator(user.createUser), this.createUser);
 
@@ -43,7 +43,6 @@ export class LoginController implements AppRoute {
   ): Promise<any> {
     try {
       const { email, password } = request.body;
-      console.log(email, password)
       const user = await userService.loginWithEmailAndPassword(email, password);
       const tokens = await new TokenRepo().generateAuthTokens(user);
       const userDetails={
