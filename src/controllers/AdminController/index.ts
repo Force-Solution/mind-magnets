@@ -57,7 +57,7 @@ export class AdminController implements AppRoute {
     );
 
     this.router.get(
-      '/getUsersAddedList',
+      '/getUsersAdded',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
