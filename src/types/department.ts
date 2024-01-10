@@ -1,7 +1,7 @@
 import mongoose, { Model, Document } from "mongoose";
 
 export interface IDepartment{
-    name: string;
+    department: string;
     createdAt: Date;
     updatedAt: Date;
 }

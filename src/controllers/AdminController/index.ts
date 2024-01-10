@@ -9,7 +9,7 @@ import teacher from '@src/validation/schema/teacher';
 import validator from '@src/validation/validator';
 
 import { authorization } from '@src/auth/authorization';
-import { authenticate } from '@src/auth/jwtUtil';
+import { ExtendedRequest, authenticate } from '@src/auth/jwtUtil';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { IRequest, ValidationSource } from '@src/types/request';
 import { IRole } from '@src/types/roles';
@@ -94,7 +94,8 @@ export class AdminController implements AppRoute {
 
   private async addTeacher(request: Request, response: Response): Promise<any> {
     try {
-      await adminService.createTeacher(request.body);
+      const { sub } = (request as ExtendedRequest).decodedToken;
+      await adminService.createTeacher(request.body, sub);
       return Api.created(request, response, 'Teacher Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -103,8 +104,8 @@ export class AdminController implements AppRoute {
 
   private async createPost(request: Request, response: Response): Promise<any> {
     try {
-       await adminService.createPost(request.body);
-       return Api.created(request, response, 'Post Created');
+      await adminService.createPost(request.body);
+      return Api.created(request, response, 'Post Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
@@ -116,7 +117,7 @@ export class AdminController implements AppRoute {
   ): Promise<any> {
     try {
       await adminService.createDepartment(request.body);
-      return Api.created(request, response, 'Department Created');
+      return Api.created(request, response, 'Post Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }

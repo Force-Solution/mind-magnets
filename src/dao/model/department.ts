@@ -3,7 +3,7 @@ import mongoose, { Schema, model } from 'mongoose';
 
 const schema = new Schema<IDepartmentDoc, IDepartmentModel>(
   {
-    name: {
+    department: {
       type: String,
       required: true,
       unique: true,
@@ -18,7 +18,7 @@ schema.statics.isDepartmentPresent = async function (
   name: string,
   excludeDepartmentId: mongoose.ObjectId,
 ) {
-  return !!(await this.findOne({ name, _id: { $ne: excludeDepartmentId } }));
+  return !!(await this.findOne({department: name,  _id: { $ne: excludeDepartmentId } }));
 };
 
 const Department = model<IDepartmentDoc, IDepartmentModel>(

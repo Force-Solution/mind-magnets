@@ -13,7 +13,9 @@ import * as teacherService from '@src/services/teacher';
 import * as BatchService from '@src/services/batch';
 import * as DepartmentService from '@src/services/department';
 import * as PostService from '@src/services/post';
+import * as NotificationService from '@src/services/notifications';
 import { IRequest } from '@src/types/request';
+import { NotificationType } from '@src/types/notifications';
 
 export const createStudent = async (
   student: IUser & IStudent & IPayment,
@@ -35,6 +37,7 @@ export const createStudent = async (
 
 export const createTeacher = async (
   teacher: IUser & ITeacher,
+  _id: string | undefined
 ): Promise<(IUserDoc | ITeacherDoc)[]> => {
   const isDepartmentPresent = await DepartmentService.isDepartmentPresentByName(teacher.department);
   const isPostPresent = await PostService.isPostPresentByName(teacher.post);
@@ -44,6 +47,10 @@ export const createTeacher = async (
 
   const user = await userService.createUser(teacher);
   const createdTeacher = await teacherService.createTeacher(teacher, user);
+
+  const notificationMsg = "You have been added in application as teacher";
+  await NotificationService.createNotification(_id, user._id, NotificationType.USER_ADDITION, notificationMsg);
+
   return Promise.all([user, createdTeacher]);
 };
 
