@@ -140,7 +140,12 @@ paths:
         required: true
       responses:
         '201':
-          description:  Student created successfully          
+          description:  Student created successfully 
+          content:
+            application/json:
+              schema:
+                type: string 
+                      
         '400':
           description: Paramater missing or invalid
           content:
@@ -202,7 +207,11 @@ paths:
         required: true
       responses:
         '201':
-          description:  Post created successfully          
+          description:  Post created successfully
+          content:
+            application/json:
+              schema:
+                type: string 
         '400':
           description: Paramater missing or invalid
           content:
@@ -217,7 +226,7 @@ paths:
           description: Internal server error
       security:
         - bearerAuth: []
-  /admin//create/department:
+  /admin/create/department:
     post:
       tags:
         - Admin Controller
@@ -233,7 +242,11 @@ paths:
         required: true
       responses:
         '201':
-          description:  Department created successfully          
+          description:  Department created successfully 
+          content:
+            application/json:
+              schema:
+                type: string
         '400':
           description: Paramater missing or invalid
           content:
@@ -248,16 +261,32 @@ paths:
           description: Internal server error
       security:
         - bearerAuth: []
-  /admin/getUsersAddedList:
+  /admin/getUsersAdded:
     get:
       tags:
         - Admin Controller
       summary: get users added list
       description: Route for admin to get users added list in the application.
       operationId: getUsersAddedList
+      parameters:
+        - name: filter
+          in: query
+          description: Status values that need to be considered for filter
+          required: true
+          explode: true
+          schema:
+            type: string
+            default: weekly
+            enum:
+              - weekly
+              - monthly
       responses:
         '200':
-          description:  Users added list fetched successfully          
+          description:  Users added list fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterUserCount'
         '400':
           description: Paramater missing or invalid
           content:
@@ -281,7 +310,11 @@ paths:
       operationId: getStudentsMissedInstallmentsBatchWise
       responses:
         '200':
-          description:  Students missed installments batch wise fetched successfully          
+          description:  Students missed installments batch wise fetched successfully   
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchWiseInstallments'
         '400':
           description: Paramater missing or invalid
           content:
@@ -303,9 +336,45 @@ paths:
       summary: get teachers list
       description: Route for admin to get teachers list in the application.
       operationId: getTeachersList
+      parameters:
+        - name: Page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+        - name: Size
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+        - name: Search
+          in: query
+          description: Search query string
+          required: false
+          schema:
+            type: string
+        - name: Sort
+          in: query
+          description: Field to sort by
+          required: false
+          schema:
+            type: string
+        - name: Order
+          in: query
+          description: Sort order (asc/desc)
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
       responses:
         '200':
-          description:  Teachers list fetched successfully          
+          description:  Teachers list fetched successfully 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTeacherList'
         '400':
           description: Paramater missing or invalid
           content:
@@ -454,7 +523,7 @@ components:
           example: Password1!
         role:
           type: string
-          example: admin
+          example: student
         batch:
           type: string
           example: Alpha
@@ -508,11 +577,28 @@ components:
           type: string
           example: Physics
     CreatePost:
-      type: string
-      example: Teacher    
+      type: object
+      properties:
+        post:
+          type: string
+          example: Professor   
     CreateDepartment:
-      type: string
-      example: Physics
+      type: object
+      properties:
+        post:
+          type: string
+          example: Textile Technology
+    BatchWiseInstallments:
+       type: array
+       items:
+         type: object
+         properties:
+           batch:
+            type: string
+            example: Alpha
+           count:
+            type: number
+            example : 10
     ErrorResponse:
       type: object
       properties:
@@ -522,6 +608,74 @@ components:
         error:
           type: string
           description: Incorrect email or password
+    FilterUserCount:
+      type: object
+      properties:
+        students:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+                example: Jan
+              count:
+                type: number
+                example: 9
+        teachers:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+                example: Jan
+              count:
+                type: number
+                example: 9
+    GetTeacherList :
+      type: object
+      properties:
+        data:
+          type: array
+          items: 
+            type: object
+            properties:
+              firstName:
+                type: string
+                example: Jon
+                description: "First name of the teacher"
+              lastName:
+                type: string
+                example: tok
+                description: "Last name of the teacher"
+              userId:
+                type: number
+                example: 66
+                description: "User ID of the teacher"
+              userName:
+                type: string
+                example: tikjon
+                description: "Username of the teacher"
+              department:
+                type: string
+                example: Textile
+                description: "Department of the teacher"
+              post:
+                type: string
+                example: Professor
+                description: "Post of the teacher"
+              createdAt:
+                type: string
+                format: date-time
+                example: 10/01/2024 11PM
+                description: "Creation date of the entry"
+        totalElements:
+            type: number
+            example: 0
+        totalPages:
+            type: number
+            example: 0
     ApiResponse:
       type: object
       properties:
