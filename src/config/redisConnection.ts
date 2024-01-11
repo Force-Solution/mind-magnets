@@ -1,5 +1,6 @@
 import Redis, { Redis as RedisClient } from 'ioredis';
 import { redisConfig } from '@src/config/configManager';
+import { AppLogger } from '@src/core/Logger';
 
 export default class RedisManager {
   private client: RedisClient;
@@ -8,11 +9,11 @@ export default class RedisManager {
     this.client = new Redis(redisConfig);
 
     this.client.on('connect', () => {
-      console.log('Connected to Redis');
+      AppLogger.info('Connected to Redis', '');
     });
 
     this.client.on('error', (err) => {
-      console.error('Error connecting to Redis:', err);
+      AppLogger.info('Error connecting to Redis:', err.message);
     });
   }
 
