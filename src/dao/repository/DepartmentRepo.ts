@@ -9,7 +9,7 @@ export class DepartmentRepo{
     }
 
     public async createDepartment(body: IDepartment):Promise<IDepartmentDoc>{
-        if(await this.isDuplicateDepartment(body.name)){
+        if(await this.isDuplicateDepartment(body.department)){
             throw new BadRequestError("Duplicate Department Name is not allowed");
         }
         return Department.create(body);

@@ -8,7 +8,7 @@ export class PostRepo {
   }
 
   public async createPost(body: IPost): Promise<IPostDoc> {
-    if (await this.isDuplicatePost(body.name)) {
+    if (await this.isDuplicatePost(body.post)) {
       throw new BadRequestError('Duplicate Post Name is not allowed');
     }
     return Post.create(body);
