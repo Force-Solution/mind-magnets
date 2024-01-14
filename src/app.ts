@@ -1,17 +1,18 @@
 import express, {
-  Request,
-  Response,
+  ErrorRequestHandler,
   NextFunction,
-  ErrorRequestHandler
+  Request,
+  Response
 } from 'express';
-
 import { json, urlencoded } from "body-parser";
+import cors from 'cors';
+
+import { AppRouting } from '@src/appRouting';
 import { basePath, environment, info, port } from '@src/config/configManager';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
-import { AppRouting } from '@src/appRouting';
-import logger from '@src/core/Logger/logging';
 import { AppLogger } from '@src/core/Logger';
-import cors from 'cors';
+import logger from '@src/core/Logger/logging';
+import { morganMiddleware } from '@src/core/Logger/morgan.middleware';
 
 export class App {
   public app: express.Express;
@@ -35,6 +36,7 @@ export class App {
     this.app.use(json({ limit: "50mb" }));
     this.app.use(urlencoded({ limit: "50mb", extended: true }));
     this.app.use(logger); // log request
+    this.app.use(morganMiddleware);
     this.app.use(cors());
   }
 
