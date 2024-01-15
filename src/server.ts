@@ -5,6 +5,7 @@ import { AppLogger } from './core/Logger';
 import RedisManager from '@src/config/redisConnection';
 
 const app = new App();
+const redisConnection = new RedisManager();
 
 const mongooseConnection = new MongooseConnection({
   mongoUrl: db.url,
@@ -19,9 +20,9 @@ const mongooseConnection = new MongooseConnection({
 mongooseConnection.connect((mongoUrl) => {
   AppLogger.info('Connection made with: ', mongoUrl);
 });
-const redisConnection = new RedisManager();
+
 redisConnection.getClient().on('connect', () => {
-  AppLogger.info('Connection made with Redis', 'done');
+  AppLogger.info('Connection made with Redis', '');
 });
 
 app.run();
