@@ -23,10 +23,18 @@ export const rateLimiter = (rule: RateLimiterRule) => {
     if(typeof ip !== "string") return new ValidationFailedError("Invalid headers");
 
     const requests = await new RedisManager().getClient().incr(ip);
-
+    let ttl = 0;
     if(requests === 1){
         await new RedisManager().getClient().expire(ip, rateLimit.time);
+        ttl = rateLimit.time;
     }
+    else{
+        ttl = await new RedisManager().getClient().ttl(ip);
+    }
+    
+    response.setHeader('X-Rate-Limit-Limit', rateLimit.limit);
+    response.setHeader('X-Rate-Limit-Remaining', rateLimit.limit - requests);
+    response.setHeader('X-Rate-Limit-Reset', ttl);
 
     if(requests > rateLimit.limit){
         return Api.tooMuchRequest(request, response, "Too Much Requests");
