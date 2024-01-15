@@ -9,6 +9,7 @@ import {
   NoEntryError,
   NotFoundError,
   TokenExpiredError,
+  ValidationFailedError,
 } from '@src/core/API_Handler/ApiError';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { AppLogger } from '@src/core/Logger';
@@ -18,7 +19,7 @@ export const catchError = (
   response: Response,
   error: ApiError | any,
 ) => {
-  console.log(error);
+  // console.log(error);
     AppLogger.error("Error Occured while processing request", error.getErrorMsg() || error.message);
   if (
     error instanceof AuthFailureError ||
@@ -35,6 +36,8 @@ export const catchError = (
   } else if (error instanceof ForbiddenError) {
     return Api.forbidden(request, response, error.getErrorMsg());
   }
+  else if(error instanceof ValidationFailedError)
+   return Api.invalid(request, response, error.getErrorMsg());  
   else{
     
   }
