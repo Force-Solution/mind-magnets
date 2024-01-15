@@ -61,6 +61,12 @@ export class TokenExpiredError extends ApiError {
   }
 }
 
+export class ValidationFailedError extends ApiError{
+  constructor(message= "Validation failed"){
+    super(ErrorType.VALIDATION_FAILED, message)
+  }
+}
+
 export const enum message{
   DuplicateEmail="Duplicate Email is not Allowed"
 }

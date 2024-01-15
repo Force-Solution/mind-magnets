@@ -40,3 +40,11 @@ export const caching = {
 };
 
 export const SWAGGER_URL='/swagger';
+
+export const rateLimiting = {
+  path: '',
+  rateLimit:{
+    time: 60,
+    limit: 2
+  }
+}
