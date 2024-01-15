@@ -45,6 +45,6 @@ export const rateLimiting = {
   path: '',
   rateLimit:{
     time: 60,
-    limit: 2
+    limit: 100
   }
 }
