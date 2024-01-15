@@ -39,7 +39,7 @@ export class App {
     this.app.use(logger); // log request
     this.app.use(morganMiddleware);
     this.app.use(cors());
-    this.app.use(rateLimiter(rateLimiting))  // for now I have put common, segregate on single route when required
+    this.app.use(rateLimiter(rateLimiting));  // for now I have put common, segregate on single route when required
   }
 
   private configureBaseRoute() {
