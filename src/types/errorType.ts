@@ -8,4 +8,6 @@ export const enum ErrorType {
   NO_DATA = 'NoDataError',
   BAD_REQUEST = 'BadRequestError',
   FORBIDDEN = 'ForbiddenError',
+  VALIDATION_FAILED = "ValidationFailedError",
+  TOO_MUCH_REQUEST = "TooMuchRequestError"
 }

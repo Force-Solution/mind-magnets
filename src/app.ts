@@ -1,17 +1,19 @@
 import express, {
-  Request,
-  Response,
+  ErrorRequestHandler,
   NextFunction,
-  ErrorRequestHandler
+  Request,
+  Response
 } from 'express';
-
 import { json, urlencoded } from "body-parser";
-import { basePath, environment, info, port } from '@src/config/configManager';
-import { Api } from '@src/core/API_Handler/ResponseHelper';
-import { AppRouting } from '@src/appRouting';
-import logger from '@src/core/Logger/logging';
-import { AppLogger } from '@src/core/Logger';
 import cors from 'cors';
+
+import { AppRouting } from '@src/appRouting';
+import { basePath, environment, info, port, rateLimiting } from '@src/config/configManager';
+import { Api } from '@src/core/API_Handler/ResponseHelper';
+import { AppLogger } from '@src/core/Logger';
+import logger from '@src/core/Logger/logging';
+import { morganMiddleware } from '@src/core/Logger/morgan.middleware';
+import { rateLimiter } from '@src/auth/rateLimit';
 
 export class App {
   public app: express.Express;
@@ -35,7 +37,9 @@ export class App {
     this.app.use(json({ limit: "50mb" }));
     this.app.use(urlencoded({ limit: "50mb", extended: true }));
     this.app.use(logger); // log request
+    this.app.use(morganMiddleware);
     this.app.use(cors());
+    this.app.use(rateLimiter(rateLimiting))  // for now I have put common, segregate on single route when required
   }
 
   private configureBaseRoute() {
@@ -49,18 +53,6 @@ export class App {
     this.app.use(basePath, this.router);
     new AppRouting(this.router);
   }
-
-  // private configureRoutes() {
-  //   // cames for routes which does not present
-  //   this.app.use((request: Request, _: Response, next: NextFunction) => {
-  //     for (const key in request.query) {
-  //       if (key) {
-  //         request.query[key.toLowerCase()] = request.query[key];
-  //       }
-  //     }
-  //     next();
-  //   });
-  // }
 
   private errorHandler() {
     this.app.use(
