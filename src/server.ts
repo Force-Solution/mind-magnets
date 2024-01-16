@@ -21,7 +21,7 @@ mongooseConnection.connect((mongoUrl) => {
 });
 const redisConnection = new RedisManager();
 redisConnection.getClient().on('connect', () => {
-  AppLogger.info('Connection made with Redis', 'done');
+  AppLogger.info('Connection made with Redis', '');
 });
 
 app.run();

@@ -10,7 +10,7 @@ export interface IPostDoc extends IPost, Document {
   _id: mongoose.Types.ObjectId;
 }
 export interface IPostModel extends Model<IPostDoc> {
-  isPostPresent(
+   isPostPresent(
     post: string,
     excludePostId?: mongoose.Types.ObjectId,
   ): Promise<boolean>;
