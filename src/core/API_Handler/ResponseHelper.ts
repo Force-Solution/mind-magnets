@@ -14,7 +14,8 @@ const Status = {
   VALIDATION_FAILED: 422,
   SERVER_ERROR: 500,
   CREATED: 201,
-  NO_CONTENT: 204
+  NO_CONTENT: 204,
+  TOO_MUCH: 429,
 };
 
 function statusMessage(status: number) {
@@ -36,7 +37,9 @@ function statusMessage(status: number) {
     case Status.CREATED:
       return 'Created';
     case Status.NO_CONTENT:
-      return 'No Content'
+      return 'No Content';
+    case Status.TOO_MUCH:
+      return 'Too Much Requests'
   }
 }
 
@@ -200,6 +203,16 @@ const Api = {
     } else {
       next();
     }
+  },
+  tooMuchRequest(_: Request, response: Response, errors:any) {
+    const body = {
+      message: statusMessage(Status.TOO_MUCH),
+      errors,
+    };
+
+    jsonResponse(response, body, {
+      status: Status.TOO_MUCH,
+    });
   },
 };
 

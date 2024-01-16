@@ -8,10 +8,6 @@ export default class RedisManager {
   constructor() {
     this.client = new Redis(redisConfig);
 
-    this.client.on('connect', () => {
-      AppLogger.info('Connected to Redis', '');
-    });
-
     this.client.on('error', (err) => {
       AppLogger.info('Error connecting to Redis:', err.message);
     });
