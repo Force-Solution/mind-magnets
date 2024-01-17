@@ -11,6 +11,7 @@ export interface IStudent{
     user: mongoose.Types.ObjectId;
     batch: mongoose.Types.ObjectId;
     payment: mongoose.Types.ObjectId;
+    classes: [mongoose.Types.ObjectId];
     dateOfJoin: Date;
     address: IAddress;
     parentName: string;

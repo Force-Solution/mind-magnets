@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 
 export interface IBatch{
     name: string;
+    classes: mongoose.Schema.Types.ObjectId[],
     createdAt: Date;
     updatedAt: Date;
 }
