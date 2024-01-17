@@ -3,6 +3,7 @@ import { Model } from "mongoose";
 
 export interface ITeacher{
     user: mongoose.Types.ObjectId;
+    classes: mongoose.Types.ObjectId[];
     department: string;
     post: string;
     createdAt: Date;

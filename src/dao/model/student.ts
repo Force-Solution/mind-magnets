@@ -14,6 +14,11 @@ const schema = new Schema<IStudentDoc, IStudentModel>(
       required: true,
       ref: 'Batch'
     },
+    classes:{
+      type: [Schema.Types.ObjectId],
+      ref: 'Class',
+      default: []
+    },
     payment:{
       type: Schema.Types.ObjectId,
       required: true,

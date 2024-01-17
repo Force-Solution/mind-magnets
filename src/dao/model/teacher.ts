@@ -7,6 +7,11 @@ const schema = new Schema<ITeacherDoc, ITeacherModel>({
         ref: 'User',
         required: true,
     },
+    classes:{
+        type: [Schema.Types.ObjectId],
+        ref: 'Class',
+        default: []
+    },
     department: {
         type:String,
         required:true,
