@@ -1,5 +1,5 @@
 import { IBatchDoc, IBatchModel } from '@src/types/batch';
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 const schema = new Schema<IBatchDoc, IBatchModel>(
   {
@@ -10,6 +10,11 @@ const schema = new Schema<IBatchDoc, IBatchModel>(
       trim: true,
       index: true
     },
+    classes:{
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Class',
+      default: []
+    }
   },
   { timestamps: true },
 );
