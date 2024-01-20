@@ -98,6 +98,8 @@ export class TokenRepo {
       payload = jwt.verify(token, tokenInfo.accessTokenSecret);
     else if (type === tokenType.REFRESH)
       payload = jwt.verify(token, tokenInfo.refreshTokenSecret);
+    else if(type === tokenType.VERIFY_EMAIL)
+      payload = jwt.verify(token, tokenInfo.emailVerifyTokenSecret);
 
     if (typeof payload.sub !== 'string') throw new BadTokenError();
 
@@ -111,5 +113,21 @@ export class TokenRepo {
     if (!tokenDoc) throw new TokenExpiredError();
 
     return tokenDoc;
+  }
+  public async generateVerifyEmailToken(user: IUserDoc){
+    const token = this.generateToken(
+      user._id,
+      tokenInfo.emailVerifyTokenValidity,
+      tokenType.VERIFY_EMAIL,
+      tokenInfo.emailVerifyTokenSecret,
+      user.role,
+    );
+    await this.saveToken(
+      token,
+      user._id,
+      tokenInfo.emailVerifyTokenValidity,
+      tokenType.VERIFY_EMAIL,
+    );
+    return token;
   }
 }

@@ -45,4 +45,9 @@ export default {
     order: Joi.string(),
     filter: Joi.string(),
   }),
+  signup: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: passwordValidation,
+    token: Joi.string().required()
+  })
 };
