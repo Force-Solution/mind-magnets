@@ -11,6 +11,7 @@ import { IUser, IUserDoc } from '@src/types/user';
 
 import * as PaymentService from '@src/services/payment';
 import * as TokenService from '@src/services/token';
+import * as StudentService from '@src/services/student';
 import { PaymentTypes } from '@src/types/payment';
 
 export const loginWithEmailAndPassword = async (
@@ -41,7 +42,7 @@ export const createUser = async (user: IUser): Promise<IUserDoc> => {
 };
 
 export const getDashboardKPIData = async (
-  _userId: number | string,
+  userId: number | string,
   role: string | string[] | undefined,
 ) => {
   if (typeof role !== 'string') throw new BadTokenError();
@@ -55,8 +56,21 @@ export const getDashboardKPIData = async (
   } else if (role === IRole.Teacher) {
   } else if (role === IRole.Parent) {
   } else if (role == IRole.Student) {
-    
+    const totalClasses = await StudentService.countTotalClass(userId);
+    console.log(totalClasses);
   } else {
     throw new BadTokenError();
   }
 };
+
+export const addPasswordToUser = async(email: string, password: string, token: string): Promise<IUserDoc | null> => {
+  const tokenDoc = await TokenService.verifyTokenByType(token, tokenType.VERIFY_EMAIL);
+  const user = await new UserRepo().getUserByEmail(email);
+
+  if(!tokenDoc || !user ||  tokenDoc.user.toString() !== user._id.toString()) throw new BadTokenError();
+  
+  user.password = password;
+  user.isEmailVerified = true;
+
+  return await new UserRepo().updateUserPassword(user);
+}

@@ -17,4 +17,18 @@ export class UserRepo {
   public  countUserByRole(role: string): Promise<number> {
     return  User.countDocuments({ role });
   }
+
+  public async updateUserPassword(userBody: IUser): Promise<IUserDoc | null>{
+    const existingUserDoc = await User.findOne({userId: userBody.userId});
+
+    if(!existingUserDoc) throw new BadRequestError("User Id is not correct");
+
+    existingUserDoc.password = userBody.password;
+    existingUserDoc.isEmailVerified = true;
+
+    await existingUserDoc.save();
+
+    return existingUserDoc;
+
+  }
 }

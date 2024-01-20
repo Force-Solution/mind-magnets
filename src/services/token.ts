@@ -26,3 +26,11 @@ export const verifyToken = async (
 export const deleteToken = async(token: ITokenDoc): Promise<void> => {
     return await new TokenRepo().deleteToken(token);
 }
+
+export const generateVerifyEmailToken = async(user: IUserDoc): Promise<string> => {
+  return await new TokenRepo().generateVerifyEmailToken(user);
+}
+
+export const verifyTokenByType = async(token: string, type: string): Promise<ITokenDoc | null> =>{
+  return await new TokenRepo().verifyToken(token, type);
+}
