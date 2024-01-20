@@ -54,7 +54,7 @@ export const validateTokenData = (payload: JwtPayload): boolean => {
     !payload.type ||
     !Types.ObjectId.isValid(payload.sub) ||
     !validRole(payload.aud) ||
-    !validTokenType(payload.type) || 
+    !validTokenType(payload.type) ||
     !verifyTime(payload.exp)
   ) {
     throw new BadTokenError();
@@ -75,6 +75,6 @@ export const validTokenType = (type: string): boolean =>
   ].some((r) => r === type);
 
 export const verifyTime = (exp?: number) => {
-    if(!exp) return false;
-    return Date.now() < exp;
-}
+  if (!exp) return false;
+  return Date.now() < exp;
+};

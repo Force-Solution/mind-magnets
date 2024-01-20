@@ -85,8 +85,8 @@ export class AdminController implements AppRoute {
 
   private async addStudent(request: Request, response: Response): Promise<any> {
     try {
-      await adminService.createStudent(request.body);
-      return Api.created(request, response, 'Student Created');
+     const [_user, _createdStudent, _payment, token] =  await adminService.createStudent(request.body);
+      return Api.created(request, response, {message: "Student Created", token});
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }

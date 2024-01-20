@@ -1,30 +1,27 @@
-import { Schema, model } from 'mongoose';
-import { IAttendanceDoc } from '@src/types/attendance';
+import { IAttendanceDoc, IAttendanceModel } from '@src/types/attendance';
+import mongoose, { Schema, model } from 'mongoose';
 
-const attendanceSchema = new Schema<IAttendanceDoc>(
+const schema = new Schema<IAttendanceDoc, IAttendanceModel>(
   {
-    date: {
-      type: Date,
-      default: () => new Date(),
+    batch:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Batch',
+        required: true
     },
-    students: [
-      {
-        student: {
-          type: Schema.Types.ObjectId,
-          ref: 'Student',
-          required: true,
-        },
-        status: {
-          type: String,
-          enum: ['present', 'absent'],
-          default: 'present',
-        },
-      },
-    ],
+    class:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Class',
+        required: true
+    },
+    user:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        required: true
+    }
   },
   { timestamps: true },
 );
 
-const Attendance = model<IAttendanceDoc>('Attendance', attendanceSchema);
+const Attendance = model<IAttendanceDoc, IAttendanceModel>('Attendance', schema);
 
 export default Attendance;

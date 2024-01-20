@@ -14,12 +14,14 @@ import * as BatchService from '@src/services/batch';
 import * as DepartmentService from '@src/services/department';
 import * as PostService from '@src/services/post';
 import * as NotificationService from '@src/services/notifications';
+import * as tokenService from '@src/services/token';
+
 import { IRequest } from '@src/types/request';
 import { NotificationType } from '@src/types/notifications';
 
 export const createStudent = async (
   student: IUser & IStudent & IPayment,
-): Promise<(IUserDoc | IStudentDoc | IPaymentDoc)[]> => {
+): Promise<(IUserDoc | IStudentDoc | IPaymentDoc | string)[]> => {
   const batch = await BatchService.getBatchByName(student.batch.toString());
   if (!batch) throw new BadRequestError('Batch Name not Found');
   student.batch = batch._id;
@@ -32,35 +34,46 @@ export const createStudent = async (
     payment,
   );
 
-  return Promise.all([user, createdStudent, payment]);
+  const token = await tokenService.generateVerifyEmailToken(user);
+  return Promise.all([user, createdStudent, payment, token]);
 };
 
 export const createTeacher = async (
   teacher: IUser & ITeacher,
-  _id: string | undefined
+  _id: string | undefined,
 ): Promise<(IUserDoc | ITeacherDoc)[]> => {
-  const isDepartmentPresent = await DepartmentService.isDepartmentPresentByName(teacher.department);
+  const isDepartmentPresent = await DepartmentService.isDepartmentPresentByName(
+    teacher.department,
+  );
   const isPostPresent = await PostService.isPostPresentByName(teacher.post);
 
-  if(!isDepartmentPresent) throw new BadRequestError("Department is not valid");
-  if(!isPostPresent) throw new BadRequestError("Post is not valid");
+  if (!isDepartmentPresent)
+    throw new BadRequestError('Department is not valid');
+  if (!isPostPresent) throw new BadRequestError('Post is not valid');
 
   const user = await userService.createUser(teacher);
   const createdTeacher = await teacherService.createTeacher(teacher, user);
 
-  const notificationMsg = "You have been added in application as teacher";
-  await NotificationService.createNotification(_id, user._id, NotificationType.USER_ADDITION, notificationMsg);
+  const notificationMsg = 'You have been added in application as teacher';
+  await NotificationService.createNotification(
+    _id,
+    user._id,
+    NotificationType.USER_ADDITION,
+    notificationMsg,
+  );
 
   return Promise.all([user, createdTeacher]);
 };
 
-export const createDepartment = async(department: IDepartment): Promise<IDepartmentDoc> => {
+export const createDepartment = async (
+  department: IDepartment,
+): Promise<IDepartmentDoc> => {
   return await DepartmentService.createDepartment(department);
-}
+};
 
-export const createPost =async (post: IPost):Promise<IPostDoc> => {
+export const createPost = async (post: IPost): Promise<IPostDoc> => {
   return await PostService.createPost(post);
-}
+};
 
 export const getStudentMissedInstBatchWise = async (): Promise<
   {
@@ -94,6 +107,6 @@ export const getFilteredUsers = async (
   return result;
 };
 
-export const getTeachersListData = async(payload:IRequest) => {
-  return  await teacherService.getTeachersList(payload);
-}
+export const getTeachersListData = async (payload: IRequest) => {
+  return await teacherService.getTeachersList(payload);
+};

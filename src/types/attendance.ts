@@ -1,11 +1,12 @@
-import { Document, Types } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
-interface IStudentAttendance {
-  student: Types.ObjectId;
-  status: 'present' | 'absent';
+export interface IAttendance {
+  batch: mongoose.Types.ObjectId;
+  class: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId[]; // present students
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface IAttendanceDoc extends Document {
-  date: Date;
-  students: IStudentAttendance[];
-}
+export interface IAttendanceDoc extends IAttendance, Document {}
+export interface IAttendanceModel extends Model<IAttendanceDoc> {}

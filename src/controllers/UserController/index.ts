@@ -18,6 +18,7 @@ export class LoginController implements AppRoute {
     this.router.post('/login', validator(user.credential), this.getLoggedIn);
     this.router.post('/logout', validator(user.logout), this.getLoggedOut);
     this.router.post('/create', validator(user.createUser), this.createUser);
+    this.router.post('/signup', validator(user.signup), this.signUp);
 
     // API that give KPI Cards Data
     this.router.get(
@@ -45,12 +46,12 @@ export class LoginController implements AppRoute {
       const { email, password } = request.body;
       const user = await userService.loginWithEmailAndPassword(email, password);
       const tokens = await new TokenRepo().generateAuthTokens(user);
-      const userDetails={
-        firstName:user.firstName,
-        lastName:user.lastName,
-        email:user.email,
-        role:user.role,
-      }
+      const userDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      };
       return Api.ok(request, response, { userDetails, tokens });
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -74,7 +75,16 @@ export class LoginController implements AppRoute {
 
       const data = await userService.getDashboardKPIData(userId, aud);
       return Api.ok(request, response, data);
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
 
+  private async signUp(request: Request, response: Response) {
+    try {
+      const { email, password, token } = request.body;
+      await userService.addPasswordToUser(email, password, token);
+      return Api.ok(request, response, 'Password Added');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
