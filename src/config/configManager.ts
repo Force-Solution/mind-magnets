@@ -22,7 +22,9 @@ export const tokenInfo = {
   accessTokenValidity: parseInt(process.env.ACCESS_TOKEN_VALIDITY_SEC || '0'),
   refreshTokenValidity: parseInt(process.env.REFRESH_TOKEN_VALIDITY_SEC || '0'),
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || '',
-  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || ''
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
+  emailVerifyTokenValidity: parseInt(process.env.EMAIL_VERIFY_TOKEN_VALIDITY_SEC || '0'),
+  emailVerifyTokenSecret: process.env.EMAIL_VERIFY_TOKEN_SECRET || ''
 };
 
 export const logDirectory = process.cwd();

@@ -26,8 +26,10 @@ export const getStudentsData = async(duration: string) => {
   return await new StudentRepo().countStudentsByDuration(duration); 
 }
 
-export const countPendingPaymentsPerBatchByInst = async() => {
-  const d =   await new StudentRepo().countPendingPaymentsPerBatch(PaymentTypes.Installments);
-  console.log(d);
-  return d;
+export const countPendingPaymentsPerBatchByInst = () => {
+ return new StudentRepo().countPendingPaymentsPerBatch(PaymentTypes.Installments);
+}
+
+export const countTotalClass = (userId: number | string) => {
+  return new StudentRepo().countClasses(userId);
 }

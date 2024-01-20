@@ -39,4 +39,9 @@ export class StudentRepo {
 
     return Student.aggregate(pipeline);
   }
+
+  public countClasses(userId: number | string): Promise<{totalClasses: number}[]> {
+    const pipeline = Pipeline.getClassesCount(userId);
+    return  Student.aggregate(pipeline);
+  }
 }
