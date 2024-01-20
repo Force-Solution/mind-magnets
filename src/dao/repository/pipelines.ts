@@ -216,3 +216,31 @@ export const getMonthlyDataOfUserJoined = (
     },
   ];
 };
+
+export const getStudentDetailsFromUserId = (userId: number | string) => {
+  return [
+    {
+      $lookup:{
+        from: "users",
+        localField: "_id",
+        foreignField: "user",
+        as: "userStudent"
+      }
+    },
+    {
+      $unwind: "$userStudent"
+    },
+    {
+      $match:{
+        "userStudent.userId": userId
+      }
+    }
+  ]
+}
+
+export const getClassesCount = (userId: number | string) =>{
+  return [
+    ...getStudentDetailsFromUserId(userId),
+    { $project: { _id: 0, totalClasses: { $size: '$classes' } } },
+  ];
+}
