@@ -2,13 +2,19 @@ import express, {
   ErrorRequestHandler,
   NextFunction,
   Request,
-  Response
+  Response,
 } from 'express';
-import { json, urlencoded } from "body-parser";
+import { json, urlencoded } from 'body-parser';
 import cors from 'cors';
 
 import { AppRouting } from '@src/appRouting';
-import { basePath, environment, info, port, rateLimiting } from '@src/config/configManager';
+import {
+  basePath,
+  environment,
+  info,
+  port,
+  rateLimiting,
+} from '@src/config/configManager';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { AppLogger } from '@src/core/Logger';
 import logger from '@src/core/Logger/logging';
@@ -34,12 +40,18 @@ export class App {
 
   private configureMiddleware() {
     AppLogger.configureLogger();
-    this.app.use(json({ limit: "50mb" }));
-    this.app.use(urlencoded({ limit: "50mb", extended: true }));
+    this.app.use(json({ limit: '50mb' }));
+    this.app.use(urlencoded({ limit: '50mb', extended: true }));
     this.app.use(logger); // log request
     this.app.use(morganMiddleware);
-    this.app.use(cors());
-    this.app.use(rateLimiter(rateLimiting));  // for now I have put common, segregate on single route when required
+    this.app.use(
+      cors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+      }),
+    );
+    this.app.use(rateLimiter(rateLimiting)); // for now I have put common, segregate on single route when required
   }
 
   private configureBaseRoute() {
@@ -72,13 +84,13 @@ export class App {
 
     // catch 404 and forward to error handler
     this.app.use((request, response) => {
-      const error =  "Route does not exist."
+      const error = 'Route does not exist.';
       return Api.notFound(request, response, error);
     });
   }
 
   public run() {
     this.app.listen(port);
-    AppLogger.info(environment || "dev", 'Listen port at ' + port);
+    AppLogger.info(environment || 'dev', 'Listen port at ' + port);
   }
 }
