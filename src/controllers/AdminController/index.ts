@@ -4,17 +4,17 @@ import { AppRoute } from '@src/appRouting';
 import * as ErrorBoundary from '@src/helper/ErrorHandling';
 import * as adminService from '@src/services/admin';
 
-import user from '@src/validation/schema/user';
 import teacher from '@src/validation/schema/teacher';
+import user from '@src/validation/schema/user';
 import validator from '@src/validation/validator';
 
 import { authorization } from '@src/auth/authorization';
 import { ExtendedRequest, authenticate } from '@src/auth/jwtUtil';
+import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { IRequest, ValidationSource } from '@src/types/request';
 import { IRole } from '@src/types/roles';
 import * as schemas from '@src/validation/schema/combinedSchema';
-import { BadRequestError } from '@src/core/API_Handler/ApiError';
 
 export class AdminController implements AppRoute {
   public route = '/admin';
@@ -57,6 +57,15 @@ export class AdminController implements AppRoute {
     );
 
     this.router.get(
+      '/department',
+      validator(user.auth, ValidationSource.HEADERS),
+      authenticate,
+      authorization(IRole.Admin),
+      validator(user.params, ValidationSource.QUERY),
+      this.departmentList
+    );
+
+    this.router.get(
       '/getUsersAdded',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
@@ -85,8 +94,12 @@ export class AdminController implements AppRoute {
 
   private async addStudent(request: Request, response: Response): Promise<any> {
     try {
-     const [_user, _createdStudent, _payment, token] =  await adminService.createStudent(request.body);
-      return Api.created(request, response, {message: "Student Created", token});
+      const [_user, _createdStudent, _payment, token] =
+        await adminService.createStudent(request.body);
+      return Api.created(request, response, {
+        message: 'Student Created',
+        token,
+      });
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
@@ -174,6 +187,33 @@ export class AdminController implements AppRoute {
       const data = await adminService.getTeachersListData(payload);
       return Api.ok(request, response, data);
     } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
+
+  private async departmentList( request: Request,
+    response: Response,
+  ): Promise<any> {
+    try{
+      const { page, size, search, sort, order } = request.query;
+      if (
+        ![page, size, search, sort, order].every(
+          (param) => typeof param === 'string',
+        )
+      )
+        throw new BadRequestError('Invalid Params');
+      const payload: IRequest = {
+        page: page as string,
+        size: size as string,
+        search: search as string,
+        sort: sort as string,
+        order: order as string,
+      };
+
+      const data = await adminService.getDepartmentList(payload);
+      return Api.ok(request, response, data);
+
+    }catch(error){
       ErrorBoundary.catchError(request, response, error);
     }
   }
