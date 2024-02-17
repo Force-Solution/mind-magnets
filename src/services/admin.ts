@@ -110,3 +110,7 @@ export const getFilteredUsers = async (
 export const getTeachersListData = async (payload: IRequest) => {
   return await teacherService.getTeachersList(payload);
 };
+
+export const getDepartmentList = async(payload: IRequest) => {
+  return await DepartmentService.departmentList(payload);
+}
