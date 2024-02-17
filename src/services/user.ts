@@ -55,7 +55,7 @@ export const getDashboardKPIData = async (
     return {teacherCount: teachers, studentCount: students, pendingDueByInstallments};
   } else if (role === IRole.Teacher) {
   } else if (role === IRole.Parent) {
-  } else if (role == IRole.Student) {
+  } else if (role === IRole.Student) {
     const totalClasses = await StudentService.countTotalClass(userId);
     console.log(totalClasses);
   } else {
