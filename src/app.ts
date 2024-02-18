@@ -2,13 +2,19 @@ import express, {
   ErrorRequestHandler,
   NextFunction,
   Request,
-  Response
+  Response,
 } from 'express';
-import { json, urlencoded } from "body-parser";
+import { json, urlencoded } from 'body-parser';
 import cors from 'cors';
 
 import { AppRouting } from '@src/appRouting';
-import { basePath, environment, info, port, rateLimiting } from '@src/config/configManager';
+import {
+  basePath,
+  environment,
+  info,
+  port,
+  rateLimiting,
+} from '@src/config/configManager';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { AppLogger } from '@src/core/Logger';
 import logger from '@src/core/Logger/logging';
@@ -34,12 +40,13 @@ export class App {
 
   private configureMiddleware() {
     AppLogger.configureLogger();
-    this.app.use(json({ limit: "50mb" }));
-    this.app.use(urlencoded({ limit: "50mb", extended: true }));
+    this.app.use(cors());
+    this.app.options('/*', this.configureOptions); // for preflight check
+    this.app.use(json({ limit: '50mb' }));
+    this.app.use(urlencoded({ limit: '50mb', extended: true }));
     this.app.use(logger); // log request
     this.app.use(morganMiddleware);
-    this.app.use(cors());
-    this.app.use(rateLimiter(rateLimiting));  // for now I have put common, segregate on single route when required
+    this.app.use(rateLimiter(rateLimiting)); // for now I have put common, segregate on single route when required
   }
 
   private configureBaseRoute() {
@@ -72,13 +79,20 @@ export class App {
 
     // catch 404 and forward to error handler
     this.app.use((request, response) => {
-      const error =  "Route does not exist."
+      const error = 'Route does not exist.';
       return Api.notFound(request, response, error);
     });
   }
 
+  private configureOptions(_request: Request, response: Response){
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    response.send(200);
+  } 
+
   public run() {
     this.app.listen(port);
-    AppLogger.info(environment || "dev", 'Listen port at ' + port);
+    AppLogger.info(environment || 'dev', 'Listen port at ' + port);
   }
 }

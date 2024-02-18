@@ -57,7 +57,7 @@ export const getDashboardKPIData = async (
   } else if (role === IRole.Teacher) {
      const toatalStudents = await TeacherService.countTotalStudents(userId);
   } else if (role === IRole.Parent) {
-  } else if (role == IRole.Student) {
+  } else if (role === IRole.Student) {
     const totalClasses = await StudentService.countTotalClass(userId);
     console.log(totalClasses);
   } else {
