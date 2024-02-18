@@ -8,8 +8,8 @@ export class TeacherController implements AppRoute {
   public router: Router = Router();
 
   constructor() {
-    this.router.get('/getMarks', this.getMarks);
-    this.router.get('/getStudents', this.getStudents);
+    this.router.get('/marks', this.getMarks);
+    this.router.get('/students', this.getStudents);
     this.router.get('/attendance', this.getAttendance);
   }
 

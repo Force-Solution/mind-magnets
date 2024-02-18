@@ -36,3 +36,7 @@ export const getTeachersList = async (
     ),
   };
 };
+
+export const countTotalStudents=(userId:number|string)=>{
+  return new TeacherRepo().countTotalStudents(userId);
+}

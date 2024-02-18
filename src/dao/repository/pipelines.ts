@@ -16,7 +16,6 @@ export const paginate = (prevPipeline: any[], options: IOptions) => {
   const countPipelineWhenSearch = [];
   let havingSearchParam = false;
 
-
   if (options.searchBy) {
     const searchCriteria: any = {};
     options.searchBy.split(',').forEach((searchOption: string) => {
@@ -33,7 +32,7 @@ export const paginate = (prevPipeline: any[], options: IOptions) => {
       havingSearchParam = !havingSearchParam;
       dataPipeline.push({ $match: searchCriteria });
     }
-  } 
+  }
 
   if (options.sortBy) {
     const sortingCriteria: any = {};
@@ -53,7 +52,7 @@ export const paginate = (prevPipeline: any[], options: IOptions) => {
       const [key, include] = projectOption.split(':');
       projectionCriteria[key] = include === 'hide' ? 0 : 1;
     });
-    
+
     dataPipeline.push({ $project: projectionCriteria });
   } else {
     dataPipeline.push({ $project: { createdAt: 0, updatedAt: 0 } });
@@ -69,20 +68,23 @@ export const paginate = (prevPipeline: any[], options: IOptions) => {
       ? parseInt(options.page.toString(), 10)
       : 1;
   const skip = (page - 1) * limit;
-  if(havingSearchParam){
+  if (havingSearchParam) {
     countPipelineWhenSearch.push(...dataPipeline);
     countPipelineWhenSearch.push({ $count: 'totalCount' });
-    countPipelineWhenSearch.push({ $project: { totalCount: { $ifNull: ['$totalCount', 0] } } });
+    countPipelineWhenSearch.push({
+      $project: { totalCount: { $ifNull: ['$totalCount', 0] } },
+    });
     // countPipelineWhenSearch.push({ $project: { totalCount: 0 } });
   }
 
   dataPipeline.push({ $skip: skip }, { $limit: limit });
-  
 
   return [
     {
       $facet: {
-        metadata: havingSearchParam ? countPipelineWhenSearch : [{ $count: 'totalCount' }],
+        metadata: havingSearchParam
+          ? countPipelineWhenSearch
+          : [{ $count: 'totalCount' }],
         data: dataPipeline,
       },
     },
@@ -220,27 +222,62 @@ export const getMonthlyDataOfUserJoined = (
 export const getStudentDetailsFromUserId = (userId: number | string) => {
   return [
     {
-      $lookup:{
-        from: "users",
-        localField: "_id",
-        foreignField: "user",
-        as: "userStudent"
-      }
+      $lookup: {
+        from: 'users',
+        localField: '_id',
+        foreignField: 'user',
+        as: 'userStudent',
+      },
     },
     {
-      $unwind: "$userStudent"
+      $unwind: '$userStudent',
     },
     {
-      $match:{
-        "userStudent.userId": userId
-      }
-    }
-  ]
-}
+      $match: {
+        'userStudent.userId': userId,
+      },
+    },
+  ];
+};
 
-export const getClassesCount = (userId: number | string) =>{
+export const getClassesCount = (userId: number | string) => {
   return [
     ...getStudentDetailsFromUserId(userId),
     { $project: { _id: 0, totalClasses: { $size: '$classes' } } },
   ];
-}
+};
+
+export const getTotalStudentsFromTeacherID = (userId: number | string) => {
+  return [
+    {
+      $match: {
+        _id: userId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'classes',
+        localField: 'classes',
+        foreignField: '_id',
+        as: 'classesData',
+      },
+    },
+    {
+      $unwind: '$classesData',
+    },
+    {
+      $lookup: {
+        from: 'students',
+        localField: 'classesData.students',
+        foreignField: '_id',
+        as: 'studentsData',
+      },
+    },
+    {
+      $group: {
+        _id: '$user',
+        totalStudents: { $sum: { $size: '$studentsData' } },
+      },
+    },
+  ];
+};
