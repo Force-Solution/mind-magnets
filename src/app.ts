@@ -41,27 +41,12 @@ export class App {
   private configureMiddleware() {
     AppLogger.configureLogger();
     this.app.use(cors());
-    this.app.options('/*', this.configureOptions);
+    this.app.options('/*', this.configureOptions); // for preflight check
     this.app.use(json({ limit: '50mb' }));
     this.app.use(urlencoded({ limit: '50mb', extended: true }));
     this.app.use(logger); // log request
     this.app.use(morganMiddleware);
     this.app.use(rateLimiter(rateLimiting)); // for now I have put common, segregate on single route when required
-    this.app.use(function(req, res, next) {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-  
-      //intercepts OPTIONS method
-      if ('OPTIONS' === req.method) {
-        //respond with 200
-        res.send(200);
-      }
-      else {
-      //move on
-        next();
-      }
-  });
   }
 
   private configureBaseRoute() {
