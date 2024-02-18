@@ -41,7 +41,7 @@ export class App {
   private configureMiddleware() {
     AppLogger.configureLogger();
     this.app.use(cors());
-    this.app.options('*', this.configureOptions);
+    this.app.options('/*', this.configureOptions);
     this.app.use(json({ limit: '50mb' }));
     this.app.use(urlencoded({ limit: '50mb', extended: true }));
     this.app.use(logger); // log request
