@@ -12,15 +12,16 @@ export class DepartmentRepo {
     if (await this.isDuplicateDepartment(body.department)) {
       throw new BadRequestError('Duplicate Department Name is not allowed');
     }
+    console.log('body', body.department);
     return Department.create(body);
   }
 
   public async getDepartmentList(payload: IRequest) {
     const data =  await Department.find({})
-      .skip(Number(payload.size) * (Number(payload.page) - 1 ))
+      .skip(Number(payload.size) * (Number(payload.page) ))//implement sort and order(true normal)
       .limit(Number(payload.size));
     const totalElements = await Department.find({}).countDocuments();
-
+    console.log('data', data);
     return {
         data: data,
         totalElements: totalElements ?? 0,

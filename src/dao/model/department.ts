@@ -26,4 +26,5 @@ const Department = model<IDepartmentDoc, IDepartmentModel>(
   schema,
 );
 
+
 export default Department;
