@@ -45,34 +45,38 @@ export class TeacherRepo {
       removeUnwantedChars(payload.sort).length &&
       removeUnwantedChars(payload.order).length
     ) {
-      requestObject['sortBy'] = `${removeUnwantedChars(payload.sort)}:${removeUnwantedChars(payload.order)}`;
+      requestObject['sortBy'] = `${removeUnwantedChars(
+        payload.sort,
+      )}:${removeUnwantedChars(payload.order)}`;
     }
 
     if (removeUnwantedChars(payload.search).length) {
-      requestObject['searchBy'] = `userName:${removeUnwantedChars(payload.search)}:i`;
+      requestObject['searchBy'] = `userName:${removeUnwantedChars(
+        payload.search,
+      )}:i`;
     }
 
     const userWithTeacherData = [
       {
         $lookup: {
-          from: "users",
-          localField: "user",
-          foreignField: "_id",
-          as: "userTeacherCombined",
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userTeacherCombined',
         },
       },
       {
-        $unwind: "$userTeacherCombined",
+        $unwind: '$userTeacherCombined',
       },
       {
         $project: {
-          firstName: "$userTeacherCombined.firstName",
-          lastName: "$userTeacherCombined.lastName",
-          userId: "$userTeacherCombined.userId",
-          userName: "$userTeacherCombined.userName",
-          department: "$department",
-          post: "$post",
-          createdAt: "$createdAt",
+          firstName: '$userTeacherCombined.firstName',
+          lastName: '$userTeacherCombined.lastName',
+          userId: '$userTeacherCombined.userId',
+          userName: '$userTeacherCombined.userName',
+          department: '$department',
+          post: '$post',
+          createdAt: '$createdAt',
         },
       },
     ];
@@ -81,4 +85,11 @@ export class TeacherRepo {
       Pipeline.paginate(userWithTeacherData, requestObject),
     );
   }
-}
+
+  public async countTotalStudents(userId: number | string): Promise<number> {
+    const totalNumberOfStudents= Pipeline.getTotalStudentsFromTeacherID(userId);
+      const result = await Teacher.aggregate(totalNumberOfStudents);
+      return result.length > 0 ? result[0].totalStudents as number : 0;
+    
+  }
+}  

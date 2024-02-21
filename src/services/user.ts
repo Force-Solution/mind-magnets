@@ -12,6 +12,7 @@ import { IUser, IUserDoc } from '@src/types/user';
 import * as PaymentService from '@src/services/payment';
 import * as TokenService from '@src/services/token';
 import * as StudentService from '@src/services/student';
+import * as TeacherService from '@src/services/teacher';
 import { PaymentTypes } from '@src/types/payment';
 
 export const loginWithEmailAndPassword = async (
@@ -46,7 +47,7 @@ export const getDashboardKPIData = async (
   role: string | string[] | undefined,
 ) => {
   if (typeof role !== 'string') throw new BadTokenError();
-
+ 
   if (role === IRole.Admin) {
     const teachers =  await new UserRepo().countUserByRole(IRole.Teacher);
     const students =  await new UserRepo().countUserByRole(IRole.Student);
@@ -54,6 +55,8 @@ export const getDashboardKPIData = async (
 
     return {teacherCount: teachers, studentCount: students, pendingDueByInstallments};
   } else if (role === IRole.Teacher) {
+     const totalStudents = await TeacherService.countTotalStudents(userId);
+      console.log(totalStudents);
   } else if (role === IRole.Parent) {
   } else if (role === IRole.Student) {
     const totalClasses = await StudentService.countTotalClass(userId);

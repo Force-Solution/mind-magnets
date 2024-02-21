@@ -19,6 +19,10 @@ externalDocs:
   url: http://swagger.io
 servers:
   - url: http://localhost:80/api/v1
+    description: local server
+  - url: https://apnicoaching.onrender.com/api/v1/
+    description: production server
+
 tags:
   - name: User Controller
     description: Operations about user

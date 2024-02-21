@@ -57,7 +57,7 @@ export class AdminController implements AppRoute {
     );
 
     this.router.get(
-      '/department',
+      '/departmentList',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
@@ -197,7 +197,7 @@ export class AdminController implements AppRoute {
     try{
       const { page, size, search, sort, order } = request.query;
       if (
-        ![page, size, search, sort, order].every(
+        ![page, size].every(
           (param) => typeof param === 'string',
         )
       )
@@ -205,13 +205,28 @@ export class AdminController implements AppRoute {
       const payload: IRequest = {
         page: page as string,
         size: size as string,
-        search: search as string,
-        sort: sort as string,
-        order: order as string,
+        search: search as string|any,
+        sort: sort as string|any,
+        order: order as string|any,
       };
 
       const data = await adminService.getDepartmentList(payload);
-      return Api.ok(request, response, data);
+      const modifiedData = {
+        totalElements: data.totalElements,
+        totalPages: data.totalPages,
+        data: data.data.map((obj, index) => {
+            const {department,createdAt,updatedAt, ...rest } = obj; 
+            console.log(rest);
+            return {
+                department: department,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                id: index + 1
+            };
+        })
+    };
+    console.log(modifiedData);
+      return Api.ok(request, response,modifiedData);
 
     }catch(error){
       ErrorBoundary.catchError(request, response, error);

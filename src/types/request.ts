@@ -8,7 +8,7 @@ export const enum ValidationSource {
 export interface IRequest{
   page: string;
   size: string;
-  search: string;
-  sort: string;
-  order: string;
+  search?: string;
+  sort?: string;
+  order?: string;
 }
