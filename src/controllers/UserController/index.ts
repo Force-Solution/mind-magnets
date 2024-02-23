@@ -19,6 +19,11 @@ export class LoginController implements AppRoute {
     this.router.post('/logout', validator(user.logout), this.getLoggedOut);
     this.router.post('/create', validator(user.createUser), this.createUser);
     this.router.post('/signup', validator(user.signup), this.signUp);
+    this.router.post(
+      '/refreshtoken',
+      validator(user.refreshToken, ValidationSource.HEADERS),
+      this.refreshAuth,
+    );
 
     // API that give KPI Cards Data
     this.router.get(
@@ -85,6 +90,23 @@ export class LoginController implements AppRoute {
       const { email, password, token } = request.body;
       await userService.addPasswordToUser(email, password, token);
       return Api.ok(request, response, 'Password Added');
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
+
+  private async refreshAuth(request: Request, response: Response) {
+    try {
+      const { refreshToken } = request.headers;
+      const user = await userService.refreshAuth(refreshToken as string);
+      const tokens = await new TokenRepo().generateAuthTokens(user);
+      const userDetails = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      };
+      return Api.ok(request, response, { userDetails, tokens });
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }

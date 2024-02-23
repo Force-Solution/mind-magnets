@@ -49,5 +49,10 @@ export default {
     email: Joi.string().required().email(),
     password: passwordValidation,
     token: Joi.string().required()
+  }),
+  refreshToken: Joi.object().keys({
+    refreshToken: Joi.string()
+    .required()
+    .pattern(/^Bearer\s+\S+$/),
   })
 };

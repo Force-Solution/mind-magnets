@@ -37,6 +37,26 @@ export const logout = async (refreshToken: string): Promise<void> => {
   await TokenService.deleteToken(refreshTokenDoc);
 };
 
+export const refreshAuth = async (refreshToken: string): Promise<IUserDoc> => {
+  try {
+    const refreshTokenDoc = await TokenService.verifyToken({
+      token: refreshToken,
+      type: tokenType.REFRESH,
+      blacklisted: false,
+    });
+    if (!refreshTokenDoc) throw new NotFoundError();
+
+    const user = await new UserRepo().getUserById(refreshTokenDoc.user);
+    if (!user)  throw new AuthFailureError('Invalid token');
+    
+    await TokenService.deleteToken(refreshTokenDoc);
+
+    return user;
+  } catch (error) {
+     throw new AuthFailureError('Invalid token');
+  }
+};
+
 export const createUser = async (user: IUser): Promise<IUserDoc> => {
   return await new UserRepo().createUser(user);
 };
