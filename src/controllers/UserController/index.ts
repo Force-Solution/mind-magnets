@@ -56,6 +56,7 @@ export class LoginController implements AppRoute {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        userId: user.userId
       };
       return Api.ok(request, response, { userDetails, tokens });
     } catch (error) {
