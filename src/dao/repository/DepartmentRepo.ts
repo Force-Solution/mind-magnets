@@ -17,7 +17,7 @@ export class DepartmentRepo {
 
   public async getDepartmentList(payload: IRequest) {
     const data =  await Department.find({})
-      .skip(Number(payload.size) * (Number(payload.page) - 1 ))
+      .skip(Number(payload.size) * (Number(payload.page)))
       .limit(Number(payload.size));
     const totalElements = await Department.find({}).countDocuments();
 

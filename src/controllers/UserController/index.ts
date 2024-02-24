@@ -16,7 +16,7 @@ export class LoginController implements AppRoute {
 
   constructor() {
     this.router.post('/login', validator(user.credential), this.getLoggedIn);
-    this.router.post('/logout', validator(user.logout), this.getLoggedOut);
+    this.router.get('/logout', validator(user.logout, ValidationSource.HEADERS), this.getLoggedOut);
     this.router.post('/create', validator(user.createUser), this.createUser);
     this.router.post('/signup', validator(user.signup), this.signUp);
     this.router.post(
@@ -65,8 +65,8 @@ export class LoginController implements AppRoute {
 
   private async getLoggedOut(request: Request, response: Response) {
     try {
-      const { refreshToken } = request.body;
-      await userService.logout(refreshToken);
+      const { refreshtoken } = request.headers;
+      await userService.logout(refreshtoken as string);
       return Api.noContent(request, response);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);

@@ -28,8 +28,8 @@ export default {
     userName: Joi.string().required().alphanum(),
   }),
   logout: Joi.object().keys({
-    refreshToken: Joi.string().required(),
-  }),
+    refreshtoken: Joi.string().required(),
+  }).unknown(true),
   auth: Joi.object()
     .keys({
       authorization: Joi.string()
@@ -38,12 +38,12 @@ export default {
     })
     .unknown(true), // remove this as security descreases
   params: Joi.object().keys({
-    page: Joi.number().min(1),
+    page: Joi.number().min(0),
     size: Joi.number().min(1),
     sort: Joi.string().optional(),
     search: Joi.string().optional(),
-    order: Joi.string(),
-    filter: Joi.string(),
+    order: Joi.string().optional(),
+    filter: Joi.string().optional(),
   }),
   signup: Joi.object().keys({
     email: Joi.string().required().email(),

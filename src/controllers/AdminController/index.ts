@@ -173,7 +173,7 @@ export class AdminController implements AppRoute {
       const { page, size, search, sort, order } = request.query;
       if (
         ![page, size, search, sort, order].every(
-          (param) => typeof param === 'string',
+          (param) => typeof param === 'string' || typeof param === undefined,
         )
       )
         throw new BadRequestError('Invalid Params');
@@ -198,7 +198,7 @@ export class AdminController implements AppRoute {
       const { page, size, search, sort, order } = request.query;
       if (
         ![page, size, search, sort, order].every(
-          (param) => typeof param === 'string',
+          (param) => typeof param === 'string' || typeof param === undefined,
         )
       )
         throw new BadRequestError('Invalid Params');
