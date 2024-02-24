@@ -18,7 +18,8 @@
     "eslint": "eslint . --ext .js,.ts",
     "upgrade": "npm update --save-dev && npm update --save",
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose",
-    "swagger": "npx swagger-cli bundle src/docs/swagger.yaml --outfile build/src/docs/swagger.yaml --type yaml"
+    "swagger": "npx swagger-cli bundle src/docs/swagger.yaml --outfile build/src/docs/swagger.yaml --type yaml",
+    "build-serve": "node build/src/server.js"
   },
   "keywords": [],
   "author": "Deepak Yadav, Mulayam Singh Yadav",
