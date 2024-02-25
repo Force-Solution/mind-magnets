@@ -114,3 +114,6 @@ export const getTeachersListData = async (payload: IRequest) => {
 export const getDepartmentList = async(payload: IRequest) => {
   return await DepartmentService.departmentList(payload);
 }
+export const getPostList = async(payload: IRequest) => {
+  return await PostService.postList(payload);
+}

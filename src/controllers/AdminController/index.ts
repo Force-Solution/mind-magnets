@@ -66,7 +66,16 @@ export class AdminController implements AppRoute {
     );
 
     this.router.get(
-      '/getUsersAdded',
+      '/post',
+      validator(user.auth, ValidationSource.HEADERS),
+      authenticate,
+      authorization(IRole.Admin),
+      validator(user.params, ValidationSource.QUERY),
+      this.postsList
+    );
+
+    this.router.get(
+      '/users',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
@@ -211,6 +220,33 @@ export class AdminController implements AppRoute {
       };
 
       const data = await adminService.getDepartmentList(payload);
+      return Api.ok(request, response, data);
+
+    }catch(error){
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
+
+  private async postsList( request: Request,
+    response: Response,
+  ): Promise<any> {
+    try{
+      const { page, size, search, sort, order } = request.query;
+      if (
+        ![page, size, search, sort, order].every(
+          (param) => typeof param === 'string' || typeof param === undefined,
+        )
+      )
+        throw new BadRequestError('Invalid Params');
+      const payload: IRequest = {
+        page: page as string,
+        size: size as string,
+        search: search as string,
+        sort: sort as string,
+        order: order as string,
+      };
+
+      const data = await adminService.getPostList(payload);
       return Api.ok(request, response, data);
 
     }catch(error){
