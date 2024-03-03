@@ -10,5 +10,11 @@ export default {
   }),
   createDepartment: Joi.object().keys({
     department: Joi.string().required()
+  }),
+  createClass: Joi.object().keys({
+    name: Joi.string().required(),
+    batch: Joi.string().required(),
+    startTime: Joi.string().required(),
+    endTime: Joi.string().required()
   })
 };

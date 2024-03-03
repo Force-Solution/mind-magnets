@@ -6,7 +6,7 @@ import { IRequest } from '@src/types/request';
 import { removeUnwantedChars } from '@src/helper/util';
 
 export class TeacherRepo {
-  public saveTeacher(teacher: ITeacher): Promise<ITeacherDoc> {
+  public saveTeacher(teacher: Partial<ITeacher>): Promise<ITeacherDoc> {
     return Teacher.create(teacher);
   }
 
@@ -62,7 +62,29 @@ export class TeacherRepo {
         },
       },
       {
+        $lookup:{
+          from: "departments",
+          localField: "department",
+          foreignFied: "_id",
+          as: "teacherDeptCombined"
+        },
+      },
+      {
+        $lookup:{
+          from: "posts",
+          localField: "post",
+          foreignFied: "_id",
+          as: "teacherPostCombined"
+        }
+      },
+      {
         $unwind: "$userTeacherCombined",
+      },
+      {
+        $unwind: "$teacherDeptCombined",
+      },
+      {
+        $unwind: "$teacherPostCombined",
       },
       {
         $project: {
@@ -70,8 +92,8 @@ export class TeacherRepo {
           lastName: "$userTeacherCombined.lastName",
           userId: "$userTeacherCombined.userId",
           userName: "$userTeacherCombined.userName",
-          department: "$department",
-          post: "$post",
+          department: "$teacherDeptCombined.department",
+          post: "$teacherPostCombined.post",
           createdAt: "$createdAt",
         },
       },

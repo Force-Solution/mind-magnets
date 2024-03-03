@@ -1,18 +1,15 @@
 import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { TeacherRepo } from '@src/dao/repository/TeacherRepo';
+import { IClass } from '@src/types/class';
 import { IRequest } from '@src/types/request';
 import { Duration } from '@src/types/roles';
 import { ITeacher, ITeacherDoc } from '@src/types/teacher';
-import { IUserDoc } from '@src/types/user';
+
+import * as ClassService from "@src/services/class"
 
 export const createTeacher = async (
-  teacher: ITeacher,
-  user: IUserDoc,
+ payload: Partial<ITeacher>
 ): Promise<ITeacherDoc> => {
-  const payload = {
-    ...teacher,
-    user: user._id,
-  };
   return await new TeacherRepo().saveTeacher(payload);
 };
 
@@ -36,3 +33,7 @@ export const getTeachersList = async (
     ),
   };
 };
+
+export const createClass = async(payload: IClass) => {
+  ClassService.createClass(payload);
+}

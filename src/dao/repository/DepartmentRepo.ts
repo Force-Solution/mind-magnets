@@ -30,6 +30,10 @@ export class DepartmentRepo {
       };
   }
 
+  public async getDepartmentFromName(name: string): Promise<IDepartmentDoc | null> {
+      return Department.findOne({department: name});
+  }
+
   // public getBatchByName(batch: string): Promise<IBatchDoc | null>{
   //     return Batch.findOne({name: batch});
   // }

@@ -13,3 +13,7 @@ export const createDepartment = async(department: IDepartment): Promise< IDepart
 export const departmentList = async( payload: IRequest) => {
   return await new DepartmentRepo().getDepartmentList(payload);
 }
+
+export const getDepartmentFromName = async(department: string): Promise<IDepartmentDoc | null> => {
+  return await new DepartmentRepo().getDepartmentFromName(department);
+}

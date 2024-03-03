@@ -13,3 +13,7 @@ export const createPost = async (post: IPost): Promise<IPostDoc> => {
 export const postList = async( payload: IRequest) => {
   return await new PostRepo().getPostList(payload);
 }
+
+export const getPostFromName = async (post: string): Promise<IPostDoc | null> => {
+  return await new PostRepo().getPostFromName(post);
+}

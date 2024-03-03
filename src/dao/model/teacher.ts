@@ -13,16 +13,14 @@ const schema = new Schema<ITeacherDoc, ITeacherModel>({
         default: []
     },
     department: {
-        type:String,
+        type: Schema.Types.ObjectId,
         required:true,
-        index:true,
-        trim:true,
+        ref: "Department"
     },
     post:{
-        type:String,
+        type: Schema.Types.ObjectId,
         required:true,
-        index:true,
-        trim:true,
+        ref: "Post"
     }
 }, {timestamps: true});
 

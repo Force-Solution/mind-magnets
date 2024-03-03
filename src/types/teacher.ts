@@ -4,8 +4,8 @@ import { Model } from "mongoose";
 export interface ITeacher{
     user: mongoose.Types.ObjectId;
     classes: mongoose.Types.ObjectId[];
-    department: string;
-    post: string;
+    department: mongoose.Types.ObjectId;
+    post: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }

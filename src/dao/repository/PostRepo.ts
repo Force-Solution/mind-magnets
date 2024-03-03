@@ -30,6 +30,10 @@ export class PostRepo {
       };
   }
 
+  public async getPostFromName(post: string): Promise<IPostDoc | null>{
+    return Post.findOne({post});
+  }
+
   // public getBatchByName(batch: string): Promise<IBatchDoc | null>{
   //     return Batch.findOne({name: batch});
   // }

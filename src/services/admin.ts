@@ -39,20 +39,30 @@ export const createStudent = async (
 };
 
 export const createTeacher = async (
-  teacher: IUser & ITeacher,
+  teacher: IUser & {department: string, post: string},
   _id: string | undefined,
 ): Promise<(IUserDoc | ITeacherDoc)[]> => {
-  const isDepartmentPresent = await DepartmentService.isDepartmentPresentByName(
-    teacher.department,
+
+  const {department, post, ...rest} = teacher;
+
+  const departmentDoc = await DepartmentService.getDepartmentFromName(
+   department,
   );
-  const isPostPresent = await PostService.isPostPresentByName(teacher.post);
+  const postDoc = await PostService.getPostFromName(post);
 
-  if (!isDepartmentPresent)
+  if (!departmentDoc)
     throw new BadRequestError('Department is not valid');
-  if (!isPostPresent) throw new BadRequestError('Post is not valid');
+  if (!postDoc) throw new BadRequestError('Post is not valid');
 
-  const user = await userService.createUser(teacher);
-  const createdTeacher = await teacherService.createTeacher(teacher, user);
+  const user = await userService.createUser(rest);
+
+  const teacherPayload: Partial<ITeacherDoc> = {
+    department: departmentDoc._id,
+    post: postDoc._id,
+    user: user._id
+  }
+
+  const createdTeacher = await teacherService.createTeacher(teacherPayload);
 
   const notificationMsg = 'You have been added in application as teacher';
   await NotificationService.createNotification(

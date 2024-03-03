@@ -31,6 +31,13 @@ const schema = new Schema<IClassDoc, IClassModel>(
   { timestamps: true },
 );
 
+schema.statics.isClassPresent = async function (
+  name: string,
+  excludeClassId: mongoose.ObjectId,
+) {
+  return !!(await this.findOne({name,  _id: { $ne: excludeClassId } }));
+};
+
 const Class = model<IClassDoc, IClassModel>('Class', schema);
 
 export default Class;
