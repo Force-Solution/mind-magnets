@@ -12,4 +12,7 @@ export const validateEmail = (email: string) =>
 
 export const addBearerString = (token: string) => "Bearer " + token;
 
-export const removeUnwantedChars = (str: string) => str.replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/^"(.*)"$/, '$1');
+export const removeUnwantedChars = (str: string | undefined) => {
+  if(!str) return "";
+  return str.replace(/[^a-zA-Z0-9 ]/g, '').trim().replace(/^"(.*)"$/, '$1');
+}

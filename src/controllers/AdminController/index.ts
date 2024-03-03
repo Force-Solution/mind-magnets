@@ -62,7 +62,7 @@ export class AdminController implements AppRoute {
       authenticate,
       authorization(IRole.Admin),
       validator(user.params, ValidationSource.QUERY),
-      this.departmentList
+      this.departmentList,
     );
 
     this.router.get(
@@ -71,7 +71,7 @@ export class AdminController implements AppRoute {
       authenticate,
       authorization(IRole.Admin),
       validator(user.params, ValidationSource.QUERY),
-      this.postsList
+      this.postsList,
     );
 
     this.router.get(
@@ -169,12 +169,32 @@ export class AdminController implements AppRoute {
       const data = await adminService.getFilteredUsers(duration);
       return Api.ok(request, response, data);
     } catch (error) {
-      console.log(error);
       ErrorBoundary.catchError(request, response, error);
     }
   }
 
   private async getTeacherList(
+    request: Request,
+    response: Response,
+  ): Promise<any> {
+    try {
+      const { page, size, search, sort, order } = request.query;
+      const payload: Partial<IRequest> = {};
+
+      if (page !== undefined) payload.page = page as string;
+      if (size !== undefined) payload.size = size as string;
+      if (search !== undefined) payload.search = search as string;
+      if (sort !== undefined) payload.sort = sort as string;
+      if (order !== undefined) payload.order = order as string;
+
+      const data = await adminService.getTeachersListData(payload);
+      return Api.ok(request, response, data);
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
+
+  private async departmentList(
     request: Request,
     response: Response,
   ): Promise<any> {
@@ -193,44 +213,16 @@ export class AdminController implements AppRoute {
         sort: sort as string,
         order: order as string,
       };
-      const data = await adminService.getTeachersListData(payload);
+
+      const data = await adminService.getDepartmentList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
   }
 
-  private async departmentList( request: Request,
-    response: Response,
-  ): Promise<any> {
-    try{
-      const { page, size, search, sort, order } = request.query;
-      if (
-        ![page, size, search, sort, order].every(
-          (param) => typeof param === 'string' || typeof param === undefined,
-        )
-      )
-        throw new BadRequestError('Invalid Params');
-      const payload: IRequest = {
-        page: page as string,
-        size: size as string,
-        search: search as string,
-        sort: sort as string,
-        order: order as string,
-      };
-
-      const data = await adminService.getDepartmentList(payload);
-      return Api.ok(request, response, data);
-
-    }catch(error){
-      ErrorBoundary.catchError(request, response, error);
-    }
-  }
-
-  private async postsList( request: Request,
-    response: Response,
-  ): Promise<any> {
-    try{
+  private async postsList(request: Request, response: Response): Promise<any> {
+    try {
       const { page, size, search, sort, order } = request.query;
       if (
         ![page, size, search, sort, order].every(
@@ -248,8 +240,7 @@ export class AdminController implements AppRoute {
 
       const data = await adminService.getPostList(payload);
       return Api.ok(request, response, data);
-
-    }catch(error){
+    } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
   }

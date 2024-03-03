@@ -35,10 +35,10 @@ export class TeacherRepo {
     return Teacher.aggregate(pipeline);
   }
 
-  public async getAllTeacherData(payload: IRequest) {
+  public async getAllTeacherData(payload: Partial<IRequest>) {
     const requestObject: Pipeline.IOptions = {
-      page: parseInt(payload.page) || 0,
-      limit: parseInt(payload.size) || 0,
+      page: parseInt(payload.page ?? '0'),
+      limit: parseInt(payload.size ?? '0'),
     };
 
     if (
@@ -65,7 +65,7 @@ export class TeacherRepo {
         $lookup:{
           from: "departments",
           localField: "department",
-          foreignFied: "_id",
+          foreignField: "_id",
           as: "teacherDeptCombined"
         },
       },
@@ -73,7 +73,7 @@ export class TeacherRepo {
         $lookup:{
           from: "posts",
           localField: "post",
-          foreignFied: "_id",
+          foreignField: "_id",
           as: "teacherPostCombined"
         }
       },

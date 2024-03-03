@@ -117,7 +117,7 @@ export const getFilteredUsers = async (
   return result;
 };
 
-export const getTeachersListData = async (payload: IRequest) => {
+export const getTeachersListData = async (payload: Partial<IRequest>) => {
   return await teacherService.getTeachersList(payload);
 };
 

@@ -5,7 +5,7 @@ import { IRequest } from '@src/types/request';
 import { Duration } from '@src/types/roles';
 import { ITeacher, ITeacherDoc } from '@src/types/teacher';
 
-import * as ClassService from "@src/services/class"
+import * as classService from "@src/services/class"
 
 export const createTeacher = async (
  payload: Partial<ITeacher>
@@ -22,18 +22,18 @@ export const getTeachersData = async (duration: string) => {
 };
 
 export const getTeachersList = async (
-  payload: IRequest,
+  payload: Partial<IRequest>,
 ): Promise<{ [key in string]: string | Object[] | number }> => {
   const response = await new TeacherRepo().getAllTeacherData(payload);
   return {
     data: response[0].data,
     totalElements: response[0].metadata[0].totalCount ?? 0,
     totalPages: Math.ceil(
-      parseInt(response[0].metadata[0].totalCount ?? 0) / parseInt(payload.size),
+      parseInt(response[0].metadata[0].totalCount ?? 0) / parseInt(payload.size ?? '0'),
     ),
   };
 };
 
 export const createClass = async(payload: IClass) => {
-  ClassService.createClass(payload);
+  return await classService.createClass(payload);
 }
