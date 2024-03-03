@@ -12,6 +12,8 @@ import { IUser, IUserDoc } from '@src/types/user';
 import * as PaymentService from '@src/services/payment';
 import * as TokenService from '@src/services/token';
 import * as StudentService from '@src/services/student';
+import * as TeacherService from '@src/services/teacher';
+import * as TestService from '@src/services/test';
 import { PaymentTypes } from '@src/types/payment';
 
 export const loginWithEmailAndPassword = async (
@@ -74,6 +76,15 @@ export const getDashboardKPIData = async (
 
     return {teacherCount: teachers, studentCount: students, pendingDueByInstallments};
   } else if (role === IRole.Teacher) {
+    const user =  await new UserRepo().getUserByUserId(userId);
+    if(!user) return
+
+    const teacher = await TeacherService.getTeacherFromUserId(user._id);
+    const countAllTests = await TestService.countAllTestsByTeacher(teacher?.id);
+    const averageStudentsPerformance = await TestService.getAveragePerformanceByTeacher(teacher?.id);
+
+    return {totalClasses: teacher?.classes.length, totalTest: countAllTests, averageStudentsPerformance}
+
   } else if (role === IRole.Parent) {
   } else if (role === IRole.Student) {
     const totalClasses = await StudentService.countTotalClass(userId);

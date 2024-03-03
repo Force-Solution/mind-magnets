@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { ITeacher, ITeacherDoc } from '@src/types/teacher';
 import Teacher from '@src/dao/model/teacher';
 import * as Pipeline from '@src/dao/repository/pipelines';
@@ -102,5 +103,9 @@ export class TeacherRepo {
     return Teacher.aggregate(
       Pipeline.paginate(userWithTeacherData, requestObject),
     );
+  }
+  // id -> teacher tbl container userId
+  public async getTeacherFromUserId(id: mongoose.Types.ObjectId){
+    return Teacher.findOne({user: id});
   }
 }

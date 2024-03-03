@@ -4,6 +4,7 @@ export interface ITest {
   name: string;
   batch: mongoose.Types.ObjectId;
   class: mongoose.Types.ObjectId;
+  teacher: mongoose.Types.ObjectId;
   maximumMarks: number;
   createdAt: Date;
   updatedAt: Date;

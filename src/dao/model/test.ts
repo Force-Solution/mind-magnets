@@ -20,6 +20,11 @@ const schema = new Schema<ITestDoc, ITestModel>(
         ref: 'Class',
         required: true
     },
+    teacher:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Teacher',
+        required: true
+    },
     maximumMarks:{
         type: Number,
         required: true,

@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { TeacherRepo } from '@src/dao/repository/TeacherRepo';
 import { IClass } from '@src/types/class';
@@ -5,7 +7,7 @@ import { IRequest } from '@src/types/request';
 import { Duration } from '@src/types/roles';
 import { ITeacher, ITeacherDoc } from '@src/types/teacher';
 
-import * as classService from "@src/services/class"
+import * as classService from "@src/services/class";
 
 export const createTeacher = async (
  payload: Partial<ITeacher>
@@ -36,4 +38,8 @@ export const getTeachersList = async (
 
 export const createClass = async(payload: IClass) => {
   return await classService.createClass(payload);
+}
+
+export const getTeacherFromUserId = async(userId: mongoose.Types.ObjectId) => {
+  return await new TeacherRepo().getTeacherFromUserId(userId);
 }

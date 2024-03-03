@@ -35,4 +35,8 @@ export class UserRepo {
   public getUserById(_id: string): Promise<IUserDoc | null>{
     return User.findOne({_id});
   }
+
+  public getUserByUserId(id: string | number): Promise<IUserDoc | null>{
+    return User.findOne({userId: id});
+  }
 }
