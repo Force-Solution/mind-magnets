@@ -10,11 +10,16 @@ import validator from '@src/validation/validator';
 
 import { authorization } from '@src/auth/authorization';
 import { ExtendedRequest, authenticate } from '@src/auth/jwtUtil';
-import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import { IRequest, ValidationSource } from '@src/types/request';
 import { IRole } from '@src/types/roles';
 import * as schemas from '@src/validation/schema/combinedSchema';
+
+import * as studentService from '@src/services/student';
+import * as teacherService from '@src/services/teacher';
+import * as postService from '@src/services/post';
+import * as departmentService from '@src/services/department';
+import * as batchService from '@src/services/batch';
 
 export class AdminController implements AppRoute {
   public route = '/admin';
@@ -22,7 +27,7 @@ export class AdminController implements AppRoute {
 
   constructor() {
     this.router.post(
-      '/create/student',
+      '/student/create',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
@@ -30,7 +35,7 @@ export class AdminController implements AppRoute {
       this.addStudent,
     );
     this.router.post(
-      '/create/teacher',
+      '/teacher/create',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
@@ -39,7 +44,7 @@ export class AdminController implements AppRoute {
     );
 
     this.router.post(
-      '/create/post',
+      '/post/create',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
@@ -48,12 +53,30 @@ export class AdminController implements AppRoute {
     );
 
     this.router.post(
-      '/create/department',
+      '/department/create',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
       validator(teacher.createDepartment),
       this.createDepartment,
+    );
+
+    this.router.post(
+      '/batch/create',
+      validator(user.auth, ValidationSource.HEADERS),
+      authenticate,
+      authorization(IRole.Admin),
+      validator(teacher.createBatch),
+      this.createBatch,
+    );
+
+    this.router.get(
+      '/batch',
+      validator(user.auth, ValidationSource.HEADERS),
+      authenticate,
+      authorization([IRole.Admin, IRole.Teacher]),
+      validator(user.params, ValidationSource.QUERY),
+      this.batchList,
     );
 
     this.router.get(
@@ -92,7 +115,7 @@ export class AdminController implements AppRoute {
     );
 
     this.router.get(
-      '/getTeachersList',
+      '/teacher',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization(IRole.Admin),
@@ -104,7 +127,7 @@ export class AdminController implements AppRoute {
   private async addStudent(request: Request, response: Response): Promise<any> {
     try {
       const [_user, _createdStudent, _payment, token] =
-        await adminService.createStudent(request.body);
+      await studentService.createStudent(request.body);
       return Api.created(request, response, {
         message: 'Student Created',
         token,
@@ -117,7 +140,7 @@ export class AdminController implements AppRoute {
   private async addTeacher(request: Request, response: Response): Promise<any> {
     try {
       const { sub } = (request as ExtendedRequest).decodedToken;
-      await adminService.createTeacher(request.body, sub);
+      await teacherService.createTeacher(request.body, sub);
       return Api.created(request, response, 'Teacher Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -126,7 +149,7 @@ export class AdminController implements AppRoute {
 
   private async createPost(request: Request, response: Response): Promise<any> {
     try {
-      await adminService.createPost(request.body);
+      await postService.createPost(request.body);
       return Api.created(request, response, 'Post Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -138,8 +161,8 @@ export class AdminController implements AppRoute {
     response: Response,
   ): Promise<any> {
     try {
-      await adminService.createDepartment(request.body);
-      return Api.created(request, response, 'Post Created');
+      await departmentService.createDepartment(request.body);
+      return Api.created(request, response, 'Department Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
@@ -150,7 +173,7 @@ export class AdminController implements AppRoute {
     response: Response,
   ): Promise<any> {
     try {
-      const data = await adminService.getStudentMissedInstBatchWise();
+      const data = await studentService.countPendingPaymentsPerBatchByInst();
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -163,10 +186,8 @@ export class AdminController implements AppRoute {
   ): Promise<any> {
     try {
       const { filter: duration } = request.query;
-      if (typeof duration !== 'string')
-        throw new BadRequestError('Invalid Params');
 
-      const data = await adminService.getFilteredUsers(duration);
+      const data = await adminService.getFilteredUsers(duration as string);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -187,7 +208,7 @@ export class AdminController implements AppRoute {
       if (sort !== undefined) payload.sort = sort as string;
       if (order !== undefined) payload.order = order as string;
 
-      const data = await adminService.getTeachersListData(payload);
+      const data = await teacherService.getTeachersList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -200,21 +221,15 @@ export class AdminController implements AppRoute {
   ): Promise<any> {
     try {
       const { page, size, search, sort, order } = request.query;
-      if (
-        ![page, size, search, sort, order].every(
-          (param) => typeof param === 'string' || typeof param === undefined,
-        )
-      )
-        throw new BadRequestError('Invalid Params');
-      const payload: IRequest = {
-        page: page as string,
-        size: size as string,
-        search: search as string,
-        sort: sort as string,
-        order: order as string,
-      };
+      const payload: Partial<IRequest> = {};
 
-      const data = await adminService.getDepartmentList(payload);
+      if (page !== undefined) payload.page = page as string;
+      if (size !== undefined) payload.size = size as string;
+      if (search !== undefined) payload.search = search as string;
+      if (sort !== undefined) payload.sort = sort as string;
+      if (order !== undefined) payload.order = order as string;
+
+      const data = await departmentService.departmentList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -224,33 +239,46 @@ export class AdminController implements AppRoute {
   private async postsList(request: Request, response: Response): Promise<any> {
     try {
       const { page, size, search, sort, order } = request.query;
-      if (
-        ![page, size, search, sort, order].every(
-          (param) => typeof param === 'string' || typeof param === undefined,
-        )
-      )
-        throw new BadRequestError('Invalid Params');
-      const payload: IRequest = {
-        page: page as string,
-        size: size as string,
-        search: search as string,
-        sort: sort as string,
-        order: order as string,
-      };
+      const payload: Partial<IRequest> = {};
 
-      const data = await adminService.getPostList(payload);
+      if (page !== undefined) payload.page = page as string;
+      if (size !== undefined) payload.size = size as string;
+      if (search !== undefined) payload.search = search as string;
+      if (sort !== undefined) payload.sort = sort as string;
+      if (order !== undefined) payload.order = order as string;
+
+      const data = await postService.postList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
   }
 
-  // public async getCustomers(
-  //   request: Request,
-  //   response: Response,
-  // ): Promise<any> {
-  // const helper = new SqlHelper('select * from customer');
-  // const results = await helper.select();
-  // return new InternalError(request, response);
-  // }
+  private async createBatch(request: Request, response: Response): Promise<any> {
+    try {
+      await batchService.createBatch(request.body);
+      return Api.created(request, response, 'Batch Created');
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
+
+  private async batchList(request: Request, response: Response): Promise<any> {
+    try {
+      const { page, size, search, sort, order } = request.query;
+      const payload: Partial<IRequest> = {};
+
+      if (page !== undefined) payload.page = page as string;
+      if (size !== undefined) payload.size = size as string;
+      if (search !== undefined) payload.search = search as string;
+      if (sort !== undefined) payload.sort = sort as string;
+      if (order !== undefined) payload.order = order as string;
+
+      const data = await batchService.batchList(payload);
+      return Api.ok(request, response, data);
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
+
 }

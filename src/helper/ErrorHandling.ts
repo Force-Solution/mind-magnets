@@ -20,7 +20,7 @@ export const catchError = (
   error: ApiError | any,
 ) => {
   // console.log(error);
-    AppLogger.error("Error Occured while processing request", error.getErrorMsg() || error.message);
+    AppLogger.error("Error Occured while processing request", error.getErrorMsg?.() || error.message || "Unknown error occurred");
   if (
     error instanceof AuthFailureError ||
     error instanceof BadTokenError ||

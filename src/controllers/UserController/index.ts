@@ -4,12 +4,12 @@ import { AppRoute } from '@src/appRouting';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 import validator from '@src/validation/validator';
 import user from '@src/validation/schema/user';
-import * as userService from '@src/services/user';
-import * as ErrorBoundary from '@src/helper/ErrorHandling';
-import { TokenRepo } from '@src/dao/repository/TokenRepo';
 import { ValidationSource } from '@src/types/request';
 import { ExtendedRequest, authenticate } from '@src/auth/jwtUtil';
 
+import * as userService from '@src/services/user';
+import * as tokenService from '@src/services/token';
+import * as ErrorBoundary from '@src/helper/ErrorHandling';
 export class LoginController implements AppRoute {
   public route = '/user';
   public router: Router = Router();
@@ -50,7 +50,7 @@ export class LoginController implements AppRoute {
     try {
       const { email, password } = request.body;
       const user = await userService.loginWithEmailAndPassword(email, password);
-      const tokens = await new TokenRepo().generateAuthTokens(user);
+      const tokens = await tokenService.generateToken(user);
       const userDetails = {
         firstName: user.firstName,
         lastName: user.lastName,
@@ -100,7 +100,7 @@ export class LoginController implements AppRoute {
     try {
       const { refreshToken } = request.headers;
       const user = await userService.refreshAuth(refreshToken as string);
-      const tokens = await new TokenRepo().generateAuthTokens(user);
+      const tokens = await tokenService.generateToken(user);
       const userDetails = {
         firstName: user.firstName,
         lastName: user.lastName,

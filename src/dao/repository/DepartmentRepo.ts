@@ -15,7 +15,7 @@ export class DepartmentRepo {
     return Department.create(body);
   }
 
-  public async getDepartmentList(payload: IRequest) {
+  public async getDepartmentList(payload: Partial<IRequest>) {
     const data =  await Department.find({})
       .skip(Number(payload.size) * (Number(payload.page)))
       .limit(Number(payload.size));
@@ -25,7 +25,7 @@ export class DepartmentRepo {
         data: data,
         totalElements: totalElements ?? 0,
         totalPages: Math.ceil(
-          totalElements / parseInt(payload.size),
+          totalElements / parseInt(payload.size ?? '0'),
         ),
       };
   }

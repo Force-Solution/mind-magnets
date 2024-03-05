@@ -10,7 +10,7 @@ export const createDepartment = async(department: IDepartment): Promise< IDepart
     return await new DepartmentRepo().createDepartment(department);
 }
 
-export const departmentList = async( payload: IRequest) => {
+export const departmentList = async( payload: Partial<IRequest>) => {
   return await new DepartmentRepo().getDepartmentList(payload);
 }
 

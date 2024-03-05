@@ -2,17 +2,52 @@ import mongoose from 'mongoose';
 
 import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { TeacherRepo } from '@src/dao/repository/TeacherRepo';
-import { IClass } from '@src/types/class';
 import { IRequest } from '@src/types/request';
 import { Duration } from '@src/types/roles';
-import { ITeacher, ITeacherDoc } from '@src/types/teacher';
+import { ITeacherDoc } from '@src/types/teacher';
 
-import * as classService from "@src/services/class";
+import * as DepartmentService from '@src/services/department';
+import * as NotificationService from '@src/services/notifications';
+import * as PostService from '@src/services/post';
+import * as userService from '@src/services/user';
+import { NotificationType } from '@src/types/notifications';
+import { IUser, IUserDoc } from '@src/types/user';
 
 export const createTeacher = async (
- payload: Partial<ITeacher>
-): Promise<ITeacherDoc> => {
-  return await new TeacherRepo().saveTeacher(payload);
+  teacher: IUser & {department: string, post: string},
+  _id: string | undefined,
+): Promise<(IUserDoc | ITeacherDoc)[]> => {
+
+  const {department, post, ...rest} = teacher;
+
+  const departmentDoc = await DepartmentService.getDepartmentFromName(
+   department,
+  );
+  const postDoc = await PostService.getPostFromName(post);
+
+  if (!departmentDoc)
+    throw new BadRequestError('Department is not valid');
+  if (!postDoc) throw new BadRequestError('Post is not valid');
+
+  const user = await userService.createUser(rest);
+
+  const teacherPayload: Partial<ITeacherDoc> = {
+    department: departmentDoc._id,
+    post: postDoc._id,
+    user: user._id
+  }
+
+  const createdTeacher = await new TeacherRepo().saveTeacher(teacherPayload);;
+
+  const notificationMsg = 'You have been added in application as teacher';
+  await NotificationService.createNotification(
+    _id,
+    user._id,
+    NotificationType.USER_ADDITION,
+    notificationMsg,
+  );
+
+  return Promise.all([user, createdTeacher]);
 };
 
 export const getTeachersData = async (duration: string) => {
@@ -35,10 +70,6 @@ export const getTeachersList = async (
     ),
   };
 };
-
-export const createClass = async(payload: IClass) => {
-  return await classService.createClass(payload);
-}
 
 export const getTeacherFromUserId = async(userId: mongoose.Types.ObjectId) => {
   return await new TeacherRepo().getTeacherFromUserId(userId);

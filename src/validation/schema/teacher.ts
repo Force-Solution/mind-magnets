@@ -11,6 +11,9 @@ export default {
   createDepartment: Joi.object().keys({
     department: Joi.string().required()
   }),
+  createBatch: Joi.object().keys({
+    name: Joi.string().required()
+  }),
   createClass: Joi.object().keys({
     name: Joi.string().required(),
     batch: Joi.string().required(),

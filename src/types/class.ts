@@ -2,6 +2,9 @@ import mongoose, { Document, Model } from 'mongoose';
 
 export interface IClass {
   name: string;
+  description: string;
+  backgroundImg: string;
+  logoImg: string;
   students: mongoose.Types.ObjectId[];
   teacher: mongoose.Types.ObjectId;
   batch: mongoose.Types.ObjectId;

@@ -10,7 +10,7 @@ export const createPost = async (post: IPost): Promise<IPostDoc> => {
   return await new PostRepo().createPost(post);
 };
 
-export const postList = async( payload: IRequest) => {
+export const postList = async(payload: Partial<IRequest>) => {
   return await new PostRepo().getPostList(payload);
 }
 

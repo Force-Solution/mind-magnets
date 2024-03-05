@@ -15,7 +15,7 @@ export class PostRepo {
     return Post.create(body);
   }
 
-  public async getPostList(payload: IRequest) {
+  public async getPostList(payload: Partial<IRequest>) {
     const data =  await Post.find({})
       .skip(Number(payload.size) * (Number(payload.page)))
       .limit(Number(payload.size));
@@ -25,7 +25,7 @@ export class PostRepo {
         data: data,
         totalElements: totalElements ?? 0,
         totalPages: Math.ceil(
-          totalElements / parseInt(payload.size),
+          totalElements / parseInt(payload.size ?? '0'),
         ),
       };
   }

@@ -76,7 +76,7 @@ export const getDashboardKPIData = async (
 
     return {teacherCount: teachers, studentCount: students, pendingDueByInstallments};
   } else if (role === IRole.Teacher) {
-    const user =  await new UserRepo().getUserByUserId(userId);
+    const user =  await getUserByUserId(userId);
     if(!user) return
 
     const teacher = await TeacherService.getTeacherFromUserId(user._id);
@@ -104,4 +104,8 @@ export const addPasswordToUser = async(email: string, password: string, token: s
   user.isEmailVerified = true;
 
   return await new UserRepo().updateUserPassword(user);
+}
+
+export const getUserByUserId = async(userId: number | string): Promise<IUserDoc | null> => {
+  return await new UserRepo().getUserByUserId(userId);
 }
