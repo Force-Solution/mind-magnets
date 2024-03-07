@@ -22,7 +22,7 @@ const schema = new Schema<ITestDoc, ITestModel>(
     },
     teacher:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Teacher',
+        ref: 'User',
         required: true
     },
     maximumMarks:{

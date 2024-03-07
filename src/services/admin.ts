@@ -1,7 +1,6 @@
 import * as teacherService from '@src/services/teacher';
 import * as studentService from '@src/services/student';
 
-
 export const getFilteredUsers = async (
   duration: string,
 ): Promise<{
