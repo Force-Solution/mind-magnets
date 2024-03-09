@@ -280,5 +280,4 @@ export class AdminController implements AppRoute {
       ErrorBoundary.catchError(request, response, error);
     }
   }
-
 }
