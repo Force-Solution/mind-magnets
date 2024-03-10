@@ -21,14 +21,14 @@ export class LoginController implements AppRoute {
   private token: TokenService;
 
   constructor() {
-    this.router.post('/login', validator(user.credential), this.getLoggedIn);
-    this.router.get('/logout', validator(user.logout, ValidationSource.HEADERS), this.getLoggedOut);
-    this.router.post('/create', validator(user.createUser), this.createUser);
-    this.router.post('/signup', validator(user.signup), this.signUp);
+    this.router.post('/login', validator(user.credential), this.getLoggedIn.bind(this));
+    this.router.get('/logout', validator(user.logout, ValidationSource.HEADERS), this.getLoggedOut.bind(this));
+    this.router.post('/create', validator(user.createUser), this.createUser.bind(this));
+    this.router.post('/signup', validator(user.signup), this.signUp.bind(this));
     this.router.post(
       '/refreshtoken',
       validator(user.refreshToken, ValidationSource.HEADERS),
-      this.refreshAuth,
+      this.refreshAuth.bind(this),
     );
 
     // API that give KPI Cards Data
@@ -36,7 +36,7 @@ export class LoginController implements AppRoute {
       '/dashboard/count/:userId',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
-      this.getDashboardCount,
+      this.getDashboardCount.bind(this),
     );
 
     this.user = container.resolve<UserService>(UserService);

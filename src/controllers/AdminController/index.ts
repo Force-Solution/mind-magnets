@@ -139,11 +139,14 @@ export class AdminController implements AppRoute {
     this.teacher = container.resolve<TeacherService>(TeacherService);
     this.department = container.resolve<DepartmentService>(DepartmentService);
     this.post = container.resolve<PostService>(PostService);
-    this.admin =  container.resolve<AdminService>(AdminService);
-    this.user =  container.resolve<UserService>(UserService);
+    this.admin = container.resolve<AdminService>(AdminService);
+    this.user = container.resolve<UserService>(UserService);
   }
 
-  private async addStudent(request: Request, response: Response): Promise<any> {
+  private addStudent = async (
+    request: Request,
+    response: Response,
+  ): Promise<any> => {
     try {
       const [_user, _createdStudent, _payment, token] =
         await this.user.createStudent(request.body);
@@ -154,9 +157,12 @@ export class AdminController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async addTeacher(request: Request, response: Response): Promise<any> {
+  private addTeacher = async (
+    request: Request,
+    response: Response,
+  ): Promise<any> => {
     try {
       const { sub } = (request as ExtendedRequest).decodedToken;
       await this.user.createTeacher(request.body, sub);
@@ -164,45 +170,48 @@ export class AdminController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async createPost(request: Request, response: Response): Promise<any> {
+  private createPost = async (
+    request: Request,
+    response: Response,
+  ): Promise<any> => {
     try {
       await this.post.createPost(request.body);
       return Api.created(request, response, 'Post Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async createDepartment(
+  private createDepartment = async (
     request: Request,
     response: Response,
-  ): Promise<any> {
+  ): Promise<any> => {
     try {
       await this.department.createDepartment(request.body);
       return Api.created(request, response, 'Department Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async getStudMissedInstBatchWise(
+  private getStudMissedInstBatchWise = async (
     request: Request,
     response: Response,
-  ): Promise<any> {
+  ): Promise<any> => {
     try {
       const data = await this.student.countPendingPaymentsPerBatchByInst();
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async getUsersAdded(
+  private getUsersAdded = async (
     request: Request,
     response: Response,
-  ): Promise<any> {
+  ): Promise<any> => {
     try {
       const { filter: duration } = request.query;
 
@@ -211,12 +220,12 @@ export class AdminController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async getTeacherList(
+  private getTeacherList = async (
     request: Request,
     response: Response,
-  ): Promise<any> {
+  ): Promise<any> => {
     try {
       const { page, size, search, sort, order } = request.query;
       const payload: Partial<IRequest> = {};
@@ -232,12 +241,12 @@ export class AdminController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async departmentList(
+  private departmentList = async (
     request: Request,
     response: Response,
-  ): Promise<any> {
+  ): Promise<any> => {
     try {
       const { page, size, search, sort, order } = request.query;
       const payload: Partial<IRequest> = {};
@@ -253,9 +262,12 @@ export class AdminController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async postsList(request: Request, response: Response): Promise<any> {
+  private postsList = async (
+    request: Request,
+    response: Response,
+  ): Promise<any> => {
     try {
       const { page, size, search, sort, order } = request.query;
       const payload: Partial<IRequest> = {};
@@ -271,21 +283,24 @@ export class AdminController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async createBatch(
+  private createBatch = async (
     request: Request,
     response: Response,
-  ): Promise<any> {
+  ): Promise<any> => {
     try {
       await this.batch.createBatch(request.body);
       return Api.created(request, response, 'Batch Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async batchList(request: Request, response: Response): Promise<any> {
+  private batchList = async (
+    request: Request,
+    response: Response,
+  ): Promise<any> => {
     try {
       const { page, size, search, sort, order } = request.query;
       const payload: Partial<IRequest> = {};
@@ -301,5 +316,5 @@ export class AdminController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 }

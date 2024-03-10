@@ -32,17 +32,19 @@ export class ClassController implements AppRoute {
     );
 
     this.router.get(
-        '/:userId',
-        validator(user.auth, ValidationSource.HEADERS),
-        authenticate,
-        authorization([IRole.Teacher, IRole.Student]),
-        this.getClass
-    )
+      '/:userId',
+      validator(user.auth, ValidationSource.HEADERS),
+      authenticate,
+      authorization([IRole.Teacher, IRole.Student]),
+      this.getClass,
+    );
 
     this.class = container.resolve<ClassService>(ClassService);
-
   }
-  private async addClass(request: Request, response: Response): Promise<any> {
+  private addClass = async (
+    request: Request,
+    response: Response,
+  ): Promise<any> => {
     try {
       const { userId } = request.params;
 
@@ -52,17 +54,20 @@ export class ClassController implements AppRoute {
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
-  }
+  };
 
-  private async getClass(request: Request, response: Response): Promise<any> {
+  private getClass = async (
+    request: Request,
+    response: Response,
+  ): Promise<any> => {
     try {
-        const { userId } = request.params;
-  
-        await this.class.createClass(request.body, userId);
-  
-        return Api.created(request, response, 'Class created');
-      } catch (error) {
-        ErrorBoundary.catchError(request, response, error);
-      }
-  }
+      const { userId } = request.params;
+
+      await this.class.createClass(request.body, userId);
+
+      return Api.created(request, response, 'Class created');
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  };
 }
