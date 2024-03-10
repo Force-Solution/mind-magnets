@@ -4,19 +4,24 @@ import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { IRequest } from '@src/types/request';
 
 export class BatchRepo {
+  batch: typeof Batch;
+  constructor(){
+    this.batch = Batch;
+  }
+
   public async createBatch(batchBody: {name: string}): Promise<IBatchDoc> {
     if (await this.getBatchByName(batchBody.name)) {
       throw new BadRequestError('Duplicate Batch Name is not allowed');
     }
-    return Batch.create(batchBody);
+    return this.batch.create(batchBody);
   }
 
   public getBatchByName(batch: string): Promise<IBatchDoc | null> {
-    return Batch.findOne({ name: batch });
+    return this.batch.findOne({ name: batch });
   }
 
   public async getBatchList(payload: Partial<IRequest>) {
-    const data = await Batch.find({})
+    const data = await this.batch.find({})
       .skip(Number(payload.size) * Number(payload.page))
       .limit(Number(payload.size));
     const totalElements = await Batch.find({}).countDocuments();

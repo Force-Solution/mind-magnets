@@ -1,55 +1,69 @@
 import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { StudentRepo } from '@src/dao/repository/StudentRepo';
+
+import { BatchService } from '@src/services/batch';
+import { PaymentService } from '@src/services/payment';
+import { TokenService } from '@src/services/token';
+import { UserService } from '@src/services/user';
+
 import { IPayment, IPaymentDoc, PaymentTypes } from '@src/types/payment';
 import { Duration } from '@src/types/roles';
 import { IStudent, IStudentDoc } from '@src/types/student';
 import { IUser, IUserDoc } from '@src/types/user';
 
-import * as userService from '@src/services/user';
-import * as paymentService from '@src/services/payment';
-import * as BatchService from '@src/services/batch';
-import * as tokenService from '@src/services/token';
-
-export const createStudent = async (
-  student: IUser & IStudent & IPayment,
-): Promise<(IUserDoc | IStudentDoc | IPaymentDoc | string)[]> => {
-  const batch = await BatchService.getBatchByName(student.batch.toString());
-  if (!batch) throw new BadRequestError('Batch Name not Found');
-  student.batch = batch._id;
-
-  const user = await userService.createUser(student);
-  const payment = await paymentService.savePayment(student);
-
-  const payload = {
-    ...student,
-    user: user._id,
-    payment: payment._id,
-  };
-  const createdStudent = await new StudentRepo().saveStudent(payload);
-
-  const token = await tokenService.generateVerifyEmailToken(user);
-  return Promise.all([user, createdStudent, payment, token]);
-};
-
-export const getStudentsData = async (duration: string) => {
-  if (!(duration === Duration.Monthly || duration === Duration.Weekly)) {
-    throw new BadRequestError('Duration is not valid');
+export class StudentService {
+  user: UserService;
+  payment: PaymentService;
+  batch: BatchService;
+  token: TokenService;
+  student: StudentRepo;
+  constructor() {
+    this.user = new UserService();
+    this.payment = new PaymentService();
+    this.batch = new BatchService();
+    this.token = new TokenService();
+    this.student = new StudentRepo();
   }
 
-  return await new StudentRepo().countStudentsByDuration(duration);
-};
+  public async createStudent(
+    student: IUser & IStudent & IPayment,
+  ): Promise<(IUserDoc | IStudentDoc | IPaymentDoc | string)[]> {
+    const batch = await this.batch.getBatchByName(student.batch.toString());
+    if (!batch) throw new BadRequestError('Batch Name not Found');
+    student.batch = batch._id;
 
-export const countPendingPaymentsPerBatchByInst = (): Promise<
-{
-  batch: string;
-  count: number;
-}[]
-> => {
-  return new StudentRepo().countPendingPaymentsPerBatch(
-    PaymentTypes.Installments,
-  );
-};
+    const user = await this.user.createUser(student);
+    const payment = await this.payment.savePayment(student);
 
-export const countTotalClass = (userId: number | string) => {
-  return new StudentRepo().countClasses(userId);
-};
+    const payload = {
+      ...student,
+      user: user._id,
+      payment: payment._id,
+    };
+    const createdStudent = await this.student.saveStudent(payload);
+
+    const token = await this.token.generateVerifyEmailToken(user);
+    return Promise.all([user, createdStudent, payment, token]);
+  }
+
+  public async getStudentsData(duration: string) {
+    if (!(duration === Duration.Monthly || duration === Duration.Weekly)) {
+      throw new BadRequestError('Duration is not valid');
+    }
+
+    return await this.student.countStudentsByDuration(duration);
+  }
+
+  public async countPendingPaymentsPerBatchByInst(): Promise<
+    {
+      batch: string;
+      count: number;
+    }[]
+  > {
+    return this.student.countPendingPaymentsPerBatch(PaymentTypes.Installments);
+  }
+
+  public async countTotalClass(userId: number | string) {
+    return this.student.countClasses(userId);
+  }
+}

@@ -7,8 +7,13 @@ import { IRequest } from '@src/types/request';
 import { removeUnwantedChars } from '@src/helper/util';
 
 export class TeacherRepo {
+  teacher: typeof Teacher;
+  constructor(){
+    this.teacher = Teacher;
+  }
+
   public saveTeacher(teacher: Partial<ITeacher>): Promise<ITeacherDoc> {
-    return Teacher.create(teacher);
+    return this.teacher.create(teacher);
   }
 
   public countTeachersByDuration(
@@ -33,7 +38,7 @@ export class TeacherRepo {
       pipeline = Pipeline.getMonthlyDataOfUserJoined(previousDate, currentDate);
     }
 
-    return Teacher.aggregate(pipeline);
+    return this.teacher.aggregate(pipeline);
   }
 
   public async getAllTeacherData(payload: Partial<IRequest>) {
@@ -100,12 +105,12 @@ export class TeacherRepo {
       },
     ];
 
-    return Teacher.aggregate(
+    return this.teacher.aggregate(
       Pipeline.paginate(userWithTeacherData, requestObject),
     );
   }
   // id -> teacher tbl container userId
   public async getTeacherFromUserId(id: mongoose.Types.ObjectId){
-    return Teacher.findOne({user: id});
+    return this.teacher.findOne({user: id});
   }
 }

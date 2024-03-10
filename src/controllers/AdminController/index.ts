@@ -2,7 +2,6 @@ import { Request, Response, Router } from 'express';
 
 import { AppRoute } from '@src/appRouting';
 import * as ErrorBoundary from '@src/helper/ErrorHandling';
-import * as adminService from '@src/services/admin';
 
 import teacher from '@src/validation/schema/teacher';
 import user from '@src/validation/schema/user';
@@ -15,15 +14,23 @@ import { IRequest, ValidationSource } from '@src/types/request';
 import { IRole } from '@src/types/roles';
 import * as schemas from '@src/validation/schema/combinedSchema';
 
-import * as studentService from '@src/services/student';
-import * as teacherService from '@src/services/teacher';
-import * as postService from '@src/services/post';
-import * as departmentService from '@src/services/department';
-import * as batchService from '@src/services/batch';
+import { StudentService } from '@src/services/student';
+import { TeacherService } from '@src/services/teacher';
+import { PostService } from '@src/services/post';
+import { DepartmentService } from '@src/services/department';
+import { BatchService } from '@src/services/batch';
+import { AdminService } from '@src/services/admin';
 
 export class AdminController implements AppRoute {
   public route = '/admin';
   public router: Router = Router();
+
+  private student: StudentService;
+  private teacher: TeacherService;
+  private post: PostService;
+  private department: DepartmentService;
+  private batch: BatchService;
+  private admin: AdminService;
 
   constructor() {
     this.router.post(
@@ -122,12 +129,19 @@ export class AdminController implements AppRoute {
       validator(user.params, ValidationSource.QUERY),
       this.getTeacherList,
     );
+
+    this.batch = new BatchService();
+    this.student = new StudentService();
+    this.teacher = new TeacherService();
+    this.department = new DepartmentService();
+    this.post = new PostService();
+    this.admin = new AdminService();
   }
 
   private async addStudent(request: Request, response: Response): Promise<any> {
     try {
       const [_user, _createdStudent, _payment, token] =
-      await studentService.createStudent(request.body);
+        await this.student.createStudent(request.body);
       return Api.created(request, response, {
         message: 'Student Created',
         token,
@@ -140,7 +154,7 @@ export class AdminController implements AppRoute {
   private async addTeacher(request: Request, response: Response): Promise<any> {
     try {
       const { sub } = (request as ExtendedRequest).decodedToken;
-      await teacherService.createTeacher(request.body, sub);
+      await this.teacher.createTeacher(request.body, sub);
       return Api.created(request, response, 'Teacher Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -149,7 +163,7 @@ export class AdminController implements AppRoute {
 
   private async createPost(request: Request, response: Response): Promise<any> {
     try {
-      await postService.createPost(request.body);
+      await this.post.createPost(request.body);
       return Api.created(request, response, 'Post Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -161,7 +175,7 @@ export class AdminController implements AppRoute {
     response: Response,
   ): Promise<any> {
     try {
-      await departmentService.createDepartment(request.body);
+      await this.department.createDepartment(request.body);
       return Api.created(request, response, 'Department Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -173,7 +187,7 @@ export class AdminController implements AppRoute {
     response: Response,
   ): Promise<any> {
     try {
-      const data = await studentService.countPendingPaymentsPerBatchByInst();
+      const data = await this.student.countPendingPaymentsPerBatchByInst();
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -187,7 +201,7 @@ export class AdminController implements AppRoute {
     try {
       const { filter: duration } = request.query;
 
-      const data = await adminService.getFilteredUsers(duration as string);
+      const data = await this.admin.getFilteredUsers(duration as string);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -208,7 +222,7 @@ export class AdminController implements AppRoute {
       if (sort !== undefined) payload.sort = sort as string;
       if (order !== undefined) payload.order = order as string;
 
-      const data = await teacherService.getTeachersList(payload);
+      const data = await this.teacher.getTeachersList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -229,7 +243,7 @@ export class AdminController implements AppRoute {
       if (sort !== undefined) payload.sort = sort as string;
       if (order !== undefined) payload.order = order as string;
 
-      const data = await departmentService.departmentList(payload);
+      const data = await this.department.departmentList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -247,16 +261,19 @@ export class AdminController implements AppRoute {
       if (sort !== undefined) payload.sort = sort as string;
       if (order !== undefined) payload.order = order as string;
 
-      const data = await postService.postList(payload);
+      const data = await this.post.postList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
   }
 
-  private async createBatch(request: Request, response: Response): Promise<any> {
+  private async createBatch(
+    request: Request,
+    response: Response,
+  ): Promise<any> {
     try {
-      await batchService.createBatch(request.body);
+      await this.batch.createBatch(request.body);
       return Api.created(request, response, 'Batch Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
@@ -274,7 +291,7 @@ export class AdminController implements AppRoute {
       if (sort !== undefined) payload.sort = sort as string;
       if (order !== undefined) payload.order = order as string;
 
-      const data = await batchService.batchList(payload);
+      const data = await this.batch.batchList(payload);
       return Api.ok(request, response, data);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);

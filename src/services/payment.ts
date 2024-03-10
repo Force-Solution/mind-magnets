@@ -1,10 +1,16 @@
-import { PaymentRepo } from "@src/dao/repository/PaymentRepo";
-import { IPayment, IPaymentDoc } from "@src/types/payment";
+import { PaymentRepo } from '@src/dao/repository/PaymentRepo';
+import { IPayment, IPaymentDoc } from '@src/types/payment';
 
-export const savePayment = async(payment: IPayment): Promise<IPaymentDoc> => {
-    return new PaymentRepo().createPayment(payment);  
-}
+export class PaymentService {
+  payment: PaymentRepo;
+  constructor() {
+    this.payment = new PaymentRepo();
+  }
+  public async savePayment(payment: IPayment): Promise<IPaymentDoc> {
+    return this.payment.createPayment(payment);
+  }
 
-export const getPaymentPendingCountByType = async(type: string):Promise<Number> => {
-    return new PaymentRepo().getPaymentPendingCountByType(type);
+  public async getPaymentPendingCountByType(type: string): Promise<Number> {
+    return this.payment.getPaymentPendingCountByType(type);
+  }
 }

@@ -1,7 +1,12 @@
-import Marks from "../model/marks";
+import Marks from "@src/dao/model/marks";
 
 export class MarksRepo {
+    marks: typeof Marks;
+    constructor(){
+        this.marks = Marks;
+    }
+    
     public async executePipeline(pipeline: any[]){
-       return Marks.aggregate(pipeline);
+       return this.marks.aggregate(pipeline);
     }
 }

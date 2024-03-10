@@ -1,26 +1,32 @@
-import * as teacherService from '@src/services/teacher';
-import * as studentService from '@src/services/student';
+import { StudentService } from '@src/services/student';
+import { TeacherService } from '@src/services/teacher';
 
-export const getFilteredUsers = async (
-  duration: string,
-): Promise<{
-  students: {
-    label: string;
-    count: number;
-  }[];
-  teachers: {
-    label: string;
-    count: number;
-  }[];
-}> => {
-  const students = await studentService.getStudentsData(duration);
-  const teachers = await teacherService.getTeachersData(duration);
+export class AdminService {
+  teacher: TeacherService;
+  student: StudentService;
+  constructor() {
+    this.teacher = new TeacherService();
+    this.student = new StudentService();
+  }
 
-  const result = {
-    students,
-    teachers,
-  };
+  public async getFilteredUsers(duration: string): Promise<{
+    students: {
+      label: string;
+      count: number;
+    }[];
+    teachers: {
+      label: string;
+      count: number;
+    }[];
+  }> {
+    const students = await this.student.getStudentsData(duration);
+    const teachers = await this.teacher.getTeachersData(duration);
 
-  return result;
-};
+    const result = {
+      students,
+      teachers,
+    };
 
+    return result;
+  }
+}

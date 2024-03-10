@@ -11,6 +11,10 @@ import { IToken, ITokenDoc, tokenType } from '@src/types/token';
 import { IUserDoc } from '@src/types/user';
 
 export class TokenRepo {
+  token: typeof Token;
+  constructor(){
+    this.token = Token;
+  }
   public generateToken(
     userId: mongoose.Types.ObjectId,
     expires: number,
@@ -36,7 +40,7 @@ export class TokenRepo {
     type: string,
     blacklisted: boolean = false,
   ): Promise<ITokenDoc> {
-    return Token.create({
+    return this.token.create({
       token,
       user: userId,
       expires: constructDateFromUnix(Date.now() + expires),
@@ -85,7 +89,7 @@ export class TokenRepo {
   }
 
   public findToken(token: Partial<IToken>): Promise<ITokenDoc | null> {
-    return Token.findOne(token);
+    return this.token.findOne(token);
   }
 
   public deleteToken(token: ITokenDoc): Promise<void> {

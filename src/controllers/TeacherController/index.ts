@@ -10,9 +10,6 @@ import { IRole } from '@src/types/roles';
 import teacher from '@src/validation/schema/teacher';
 import user from '@src/validation/schema/user';
 import validator from '@src/validation/validator';
-// import { IClass } from '@src/types/class';
-
-//import * as classService from '@src/services/class';
 import { Api } from '@src/core/API_Handler/ResponseHelper';
 
 export class TeacherController implements AppRoute {

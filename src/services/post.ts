@@ -1,19 +1,27 @@
 import { PostRepo } from '@src/dao/repository/PostRepo';
+
 import { IPost, IPostDoc } from '@src/types/post';
 import { IRequest } from '@src/types/request';
 
-export const isPostPresentByName = async (post: string): Promise<boolean> => {
-  return await new PostRepo().isDuplicatePost(post);
-};
+export class PostService {
+  post: PostRepo;
+  constructor() {
+    this.post = new PostRepo();
+  }
 
-export const createPost = async (post: IPost): Promise<IPostDoc> => {
-  return await new PostRepo().createPost(post);
-};
+  public async isPostPresentByName(post: string): Promise<boolean> {
+    return await this.post.isDuplicatePost(post);
+  }
 
-export const postList = async(payload: Partial<IRequest>) => {
-  return await new PostRepo().getPostList(payload);
-}
+  public async createPost(post: IPost): Promise<IPostDoc> {
+    return await this.post.createPost(post);
+  }
 
-export const getPostFromName = async (post: string): Promise<IPostDoc | null> => {
-  return await new PostRepo().getPostFromName(post);
+  public async postList(payload: Partial<IRequest>) {
+    return await this.post.getPostList(payload);
+  }
+
+  public async getPostFromName(post: string): Promise<IPostDoc | null> {
+    return await this.post.getPostFromName(post);
+  }
 }

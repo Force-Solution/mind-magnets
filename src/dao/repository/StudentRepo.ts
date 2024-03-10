@@ -1,18 +1,24 @@
 import { IStudent, IStudentDoc } from '@src/types/student';
-import Student from '@src/dao/model/student';
 import { Duration } from '@src/types/roles';
 import * as Pipeline from '@src/dao/repository/pipelines';
 
+import Student from '@src/dao/model/student';
 export class StudentRepo {
+  student: typeof Student;
+
+  constructor(){
+    this.student = Student;
+  }
+
   public saveStudent(student: IStudent): Promise<IStudentDoc> {
-    return Student.create(student);
+    return this.student.create(student);
   }
 
   public countPendingPaymentsPerBatch(
     paymentType: string,
   ): Promise<{ batch: string; count: number }[]> {
     const pipeline = Pipeline.getPendingPaymentsPerBatch(paymentType);
-    return Student.aggregate(pipeline);
+    return this.student.aggregate(pipeline);
   }
 
   public countStudentsByDuration(
@@ -37,11 +43,11 @@ export class StudentRepo {
       pipeline = Pipeline.getMonthlyDataOfUserJoined(previousDate, currentDate);
     }
 
-    return Student.aggregate(pipeline);
+    return this.student.aggregate(pipeline);
   }
 
   public countClasses(userId: number | string): Promise<{totalClasses: number}[]> {
     const pipeline = Pipeline.getClassesCount(userId);
-    return  Student.aggregate(pipeline);
+    return this.student.aggregate(pipeline);
   }
 }

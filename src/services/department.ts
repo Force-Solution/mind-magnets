@@ -1,19 +1,29 @@
-import { DepartmentRepo } from "@src/dao/repository/DepartmentRepo";
-import { IDepartment, IDepartmentDoc } from "@src/types/department";
-import { IRequest } from "@src/types/request";
+import { DepartmentRepo } from '@src/dao/repository/DepartmentRepo';
+import { IDepartment, IDepartmentDoc } from '@src/types/department';
+import { IRequest } from '@src/types/request';
 
-export const isDepartmentPresentByName = async (department: string): Promise<boolean> => {
-  return await new DepartmentRepo().isDuplicateDepartment(department);
-};
+export class DepartmentService {
+  department: DepartmentRepo;
+  constructor() {
+    this.department = new DepartmentRepo();
+  }
+  public async isDepartmentPresentByName(department: string): Promise<boolean> {
+    return await this.department.isDuplicateDepartment(department);
+  }
 
-export const createDepartment = async(department: IDepartment): Promise< IDepartmentDoc> => {
-    return await new DepartmentRepo().createDepartment(department);
-}
+  public async createDepartment(
+    department: IDepartment,
+  ): Promise<IDepartmentDoc> {
+    return await this.department.createDepartment(department);
+  }
 
-export const departmentList = async( payload: Partial<IRequest>) => {
-  return await new DepartmentRepo().getDepartmentList(payload);
-}
+  public async departmentList(payload: Partial<IRequest>) {
+    return await this.department.getDepartmentList(payload);
+  }
 
-export const getDepartmentFromName = async(department: string): Promise<IDepartmentDoc | null> => {
-  return await new DepartmentRepo().getDepartmentFromName(department);
+  public async getDepartmentFromName(
+    department: string,
+  ): Promise<IDepartmentDoc | null> {
+    return await this.department.getDepartmentFromName(department);
+  }
 }

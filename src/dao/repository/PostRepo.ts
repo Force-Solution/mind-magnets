@@ -4,22 +4,28 @@ import { IPost, IPostDoc } from '@src/types/post';
 import { IRequest } from '@src/types/request';
 
 export class PostRepo {
+  post: typeof Post;
+
+  constructor(){
+    this.post = Post;
+  }
+
   public async isDuplicatePost(name: string): Promise<boolean> {
-    return Post.isPostPresent(name);
+    return this.post.isPostPresent(name);
   }
 
   public async createPost(body: IPost): Promise<IPostDoc> {
     if (await this.isDuplicatePost(body.post)) {
       throw new BadRequestError('Duplicate Post Name is not allowed');
     }
-    return Post.create(body);
+    return this.post.create(body);
   }
 
   public async getPostList(payload: Partial<IRequest>) {
-    const data =  await Post.find({})
+    const data =  await this.post.find({})
       .skip(Number(payload.size) * (Number(payload.page)))
       .limit(Number(payload.size));
-    const totalElements = await Post.find({}).countDocuments();
+    const totalElements = await this.post.find({}).countDocuments();
 
     return {
         data: data,
@@ -31,10 +37,7 @@ export class PostRepo {
   }
 
   public async getPostFromName(post: string): Promise<IPostDoc | null>{
-    return Post.findOne({post});
+    return this.post.findOne({post});
   }
 
-  // public getBatchByName(batch: string): Promise<IBatchDoc | null>{
-  //     return Batch.findOne({name: batch});
-  // }
 }
