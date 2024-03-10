@@ -1,6 +1,7 @@
 import { IPayment, IPaymentDoc } from '@src/types/payment';
 import Payment from '@src/dao/model/payment';
-
+import { injectable } from 'inversify';
+@injectable()
 export class PaymentRepo {
   payment: typeof Payment;
 

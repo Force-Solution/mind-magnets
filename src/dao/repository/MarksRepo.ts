@@ -1,5 +1,6 @@
 import Marks from "@src/dao/model/marks";
-
+import { injectable } from "inversify";
+@injectable()
 export class MarksRepo {
     marks: typeof Marks;
     constructor(){

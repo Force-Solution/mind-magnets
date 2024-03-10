@@ -1,6 +1,7 @@
 import Notification from '@src/dao/model/notifications';
 import { INotifications, INotificationsDoc } from '@src/types/notifications';
-
+import { injectable } from 'inversify';
+@injectable()
 export class NotificationRepo {
   notification: typeof Notification;
 

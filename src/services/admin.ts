@@ -1,13 +1,13 @@
 import { StudentService } from '@src/services/student';
 import { TeacherService } from '@src/services/teacher';
-
+import { TYPES } from '@src/types/types';
+import { injectable, inject } from 'inversify';
+@injectable()
 export class AdminService {
-  teacher: TeacherService;
-  student: StudentService;
-  constructor() {
-    this.teacher = new TeacherService();
-    this.student = new StudentService();
-  }
+  constructor(
+    @inject(TYPES.TeacherService) private teacher: TeacherService,
+    @inject(TYPES.StudentService) private student: StudentService,
+  ) {}
 
   public async getFilteredUsers(duration: string): Promise<{
     students: {

@@ -14,12 +14,15 @@ import { IRequest, ValidationSource } from '@src/types/request';
 import { IRole } from '@src/types/roles';
 import * as schemas from '@src/validation/schema/combinedSchema';
 
+import { AdminService } from '@src/services/admin';
+import { BatchService } from '@src/services/batch';
+import { DepartmentService } from '@src/services/department';
+import { PostService } from '@src/services/post';
 import { StudentService } from '@src/services/student';
 import { TeacherService } from '@src/services/teacher';
-import { PostService } from '@src/services/post';
-import { DepartmentService } from '@src/services/department';
-import { BatchService } from '@src/services/batch';
-import { AdminService } from '@src/services/admin';
+
+import { container } from '@src/inversify.config';
+import { UserService } from '@src/services/user';
 
 export class AdminController implements AppRoute {
   public route = '/admin';
@@ -31,6 +34,7 @@ export class AdminController implements AppRoute {
   private department: DepartmentService;
   private batch: BatchService;
   private admin: AdminService;
+  private user: UserService;
 
   constructor() {
     this.router.post(
@@ -130,18 +134,19 @@ export class AdminController implements AppRoute {
       this.getTeacherList,
     );
 
-    this.batch = new BatchService();
-    this.student = new StudentService();
-    this.teacher = new TeacherService();
-    this.department = new DepartmentService();
-    this.post = new PostService();
-    this.admin = new AdminService();
+    this.batch = container.resolve<BatchService>(BatchService);
+    this.student = container.resolve<StudentService>(StudentService);
+    this.teacher = container.resolve<TeacherService>(TeacherService);
+    this.department = container.resolve<DepartmentService>(DepartmentService);
+    this.post = container.resolve<PostService>(PostService);
+    this.admin =  container.resolve<AdminService>(AdminService);
+    this.user =  container.resolve<UserService>(UserService);
   }
 
   private async addStudent(request: Request, response: Response): Promise<any> {
     try {
       const [_user, _createdStudent, _payment, token] =
-        await this.student.createStudent(request.body);
+        await this.user.createStudent(request.body);
       return Api.created(request, response, {
         message: 'Student Created',
         token,
@@ -154,7 +159,7 @@ export class AdminController implements AppRoute {
   private async addTeacher(request: Request, response: Response): Promise<any> {
     try {
       const { sub } = (request as ExtendedRequest).decodedToken;
-      await this.teacher.createTeacher(request.body, sub);
+      await this.user.createTeacher(request.body, sub);
       return Api.created(request, response, 'Teacher Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);

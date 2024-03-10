@@ -13,6 +13,8 @@ import classes from '@src/validation/schema/class';
 import user from '@src/validation/schema/user';
 import { ClassService } from '@src/services/class';
 
+import { container } from '@src/inversify.config';
+
 export class ClassController implements AppRoute {
   public route = '/class';
   public router: Router = Router();
@@ -37,7 +39,7 @@ export class ClassController implements AppRoute {
         this.getClass
     )
 
-    this.class = new ClassService();
+    this.class = container.resolve<ClassService>(ClassService);
 
   }
   private async addClass(request: Request, response: Response): Promise<any> {

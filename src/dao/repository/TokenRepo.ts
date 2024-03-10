@@ -9,7 +9,8 @@ import {
 import { addBearerString, constructDateFromUnix } from '@src/helper/util';
 import { IToken, ITokenDoc, tokenType } from '@src/types/token';
 import { IUserDoc } from '@src/types/user';
-
+import { injectable } from 'inversify';
+@injectable()
 export class TokenRepo {
   token: typeof Token;
   constructor(){

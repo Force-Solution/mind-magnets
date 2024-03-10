@@ -10,6 +10,9 @@ import { ExtendedRequest, authenticate } from '@src/auth/jwtUtil';
 import {UserService} from '@src/services/user';
 import {TokenService} from '@src/services/token';
 import * as ErrorBoundary from '@src/helper/ErrorHandling';
+
+import { container } from '@src/inversify.config';
+
 export class LoginController implements AppRoute {
   public route = '/user';
   public router: Router = Router();
@@ -36,8 +39,8 @@ export class LoginController implements AppRoute {
       this.getDashboardCount,
     );
 
-    this.user = new UserService();
-    this.token = new TokenService();
+    this.user = container.resolve<UserService>(UserService);
+    this.token = container.resolve<TokenService>(TokenService);
   }
 
   private async createUser(request: Request, response: Response): Promise<any> {

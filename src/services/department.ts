@@ -1,12 +1,14 @@
 import { DepartmentRepo } from '@src/dao/repository/DepartmentRepo';
 import { IDepartment, IDepartmentDoc } from '@src/types/department';
 import { IRequest } from '@src/types/request';
+import { TYPES } from '@src/types/types';
+import { injectable, inject } from 'inversify';
 
+@injectable()
 export class DepartmentService {
-  department: DepartmentRepo;
-  constructor() {
-    this.department = new DepartmentRepo();
-  }
+  constructor(
+    @inject(TYPES.DepartmentRepo) private department: DepartmentRepo,
+  ) {}
   public async isDepartmentPresentByName(department: string): Promise<boolean> {
     return await this.department.isDuplicateDepartment(department);
   }

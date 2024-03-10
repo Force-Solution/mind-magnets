@@ -1,12 +1,11 @@
 import { TokenRepo } from '@src/dao/repository/TokenRepo';
 import { IToken, ITokenDoc } from '@src/types/token';
+import { TYPES } from '@src/types/types';
 import { IUserDoc } from '@src/types/user';
-
+import { injectable, inject } from 'inversify';
+@injectable()
 export class TokenService {
-  token: TokenRepo;
-  constructor() {
-    this.token = new TokenRepo();
-  }
+  constructor(@inject(TYPES.TokenRepo) private token: TokenRepo) {}
 
   public async verifyToken(token: Partial<IToken>): Promise<ITokenDoc | null> {
     return await this.token.findToken(token);

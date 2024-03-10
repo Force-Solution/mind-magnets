@@ -4,7 +4,8 @@ import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import Class from '@src/dao/model/class';
 
 import { IClass, IClassDoc } from '@src/types/class';
-
+import { injectable } from 'inversify';
+@injectable()
 export class ClassRepo {
   class: typeof Class;
   constructor(){

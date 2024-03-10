@@ -1,8 +1,10 @@
+import "reflect-metadata";
 import { App } from '@src/app';
 import MongooseConnection from './config/dbConnection';
 import { db } from './config/configManager';
 import { AppLogger } from './core/Logger';
 import RedisManager from '@src/config/redisConnection';
+
 
 const app = new App();
 const redisConnection = new RedisManager();

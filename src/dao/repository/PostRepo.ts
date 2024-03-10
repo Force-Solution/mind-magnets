@@ -2,7 +2,8 @@ import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import Post from '@src/dao/model/post';
 import { IPost, IPostDoc } from '@src/types/post';
 import { IRequest } from '@src/types/request';
-
+import { injectable } from 'inversify';
+@injectable()
 export class PostRepo {
   post: typeof Post;
 

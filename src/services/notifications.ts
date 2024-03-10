@@ -5,13 +5,14 @@ import {
   Priority,
 } from '@src/types/notifications';
 import { IRole } from '@src/types/roles';
+import { TYPES } from '@src/types/types';
+import { injectable, inject } from 'inversify';
 import mongoose from 'mongoose';
-
+@injectable()
 export class NotificationService {
-  notification: NotificationRepo;
-  constructor() {
-    this.notification = new NotificationRepo();
-  }
+  constructor(
+    @inject(TYPES.NotificationRepo) private notification: NotificationRepo,
+  ) {}
   public async createNotification(
     sender: string | undefined,
     receiver: mongoose.Types.ObjectId,

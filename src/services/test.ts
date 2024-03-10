@@ -1,12 +1,10 @@
 import { TestRepo } from '@src/dao/repository/TestRepo';
+import { TYPES } from '@src/types/types';
+import { injectable, inject } from 'inversify';
 import mongoose from 'mongoose';
-
+@injectable()
 export class TestService {
-  test: TestRepo;
-
-  constructor() {
-    this.test = new TestRepo();
-  }
+  constructor(@inject(TYPES.TestRepo) private test: TestRepo) {}
 
   public async countAllTestsByTeacher(id: mongoose.Types.ObjectId | undefined) {
     if (!id) return 0;
@@ -14,7 +12,9 @@ export class TestService {
     return allTests.length;
   }
 
-  public async getAveragePerformanceByTeacher(teacherId: mongoose.Types.ObjectId) {
+  public async getAveragePerformanceByTeacher(
+    teacherId: mongoose.Types.ObjectId,
+  ) {
     const pipeline = [
       {
         $lookup: {

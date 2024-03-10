@@ -2,12 +2,11 @@ import { PostRepo } from '@src/dao/repository/PostRepo';
 
 import { IPost, IPostDoc } from '@src/types/post';
 import { IRequest } from '@src/types/request';
-
+import { TYPES } from '@src/types/types';
+import { injectable, inject } from 'inversify';
+@injectable()
 export class PostService {
-  post: PostRepo;
-  constructor() {
-    this.post = new PostRepo();
-  }
+  constructor(@inject(TYPES.PostRepo) private post: PostRepo) {}
 
   public async isPostPresentByName(post: string): Promise<boolean> {
     return await this.post.isDuplicatePost(post);

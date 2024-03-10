@@ -2,7 +2,8 @@ import { IBatchDoc } from '@src/types/batch';
 import Batch from '@src/dao/model/batch';
 import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { IRequest } from '@src/types/request';
-
+import { injectable } from 'inversify';
+@injectable()
 export class BatchRepo {
   batch: typeof Batch;
   constructor(){

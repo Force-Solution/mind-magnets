@@ -6,60 +6,17 @@ import { IRequest } from '@src/types/request';
 import { Duration } from '@src/types/roles';
 import { ITeacherDoc } from '@src/types/teacher';
 
-import { NotificationType } from '@src/types/notifications';
-import { IUser, IUserDoc } from '@src/types/user';
-
-
-import { UserService } from '@src/services/user';
-import { DepartmentService } from '@src/services/department';
-import { NotificationService } from '@src/services/notifications';
-import { PostService } from '@src/services/post';
-
+import { TYPES } from '@src/types/types';
+import { injectable, inject } from 'inversify';
+@injectable()
 export class TeacherService {
-  user: UserService;
-  department: DepartmentService;
-  notification: NotificationService;
-  post: PostService;
-  teacher: TeacherRepo;
-  constructor() {
-    this.user = new UserService();
-    this.department = new DepartmentService();
-    this.notification = new NotificationService();
-    this.post = new PostService();
-    this.teacher = new TeacherRepo();
-  }
-  public async createTeacher(
-    teacher: IUser & { department: string; post: string },
-    _id: string | undefined,
-  ): Promise<(IUserDoc | ITeacherDoc)[]> {
-    const { department, post, ...rest } = teacher;
-
-    const departmentDoc =
-      await this.department.getDepartmentFromName(department);
-    const postDoc = await this.post.getPostFromName(post);
-
-    if (!departmentDoc) throw new BadRequestError('Department is not valid');
-    if (!postDoc) throw new BadRequestError('Post is not valid');
-
-    const user = await this.user.createUser(rest);
-
-    const teacherPayload: Partial<ITeacherDoc> = {
-      department: departmentDoc._id,
-      post: postDoc._id,
-      user: user._id,
-    };
-
-    const createdTeacher = await this.teacher.saveTeacher(teacherPayload);
-
-    const notificationMsg = 'You have been added in application as teacher';
-    await this.notification.createNotification(
-      _id,
-      user._id,
-      NotificationType.USER_ADDITION,
-      notificationMsg,
-    );
-
-    return Promise.all([user, createdTeacher]);
+  constructor(
+    @inject(TYPES.TeacherRepo) private teacher: TeacherRepo,
+  ) {}
+  public async saveTeacher(
+    payload: Partial<ITeacherDoc>,
+  ): Promise<ITeacherDoc> {
+    return  await this.teacher.saveTeacher(payload);
   }
 
   public async getTeachersData(duration: string) {

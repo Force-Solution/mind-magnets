@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Test from '../model/test';
-
+import { injectable } from 'inversify';
+@injectable()
 export class TestRepo {
   test: typeof Test;
   constructor() {

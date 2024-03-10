@@ -1,7 +1,9 @@
 import { BadRequestError, message } from '@src/core/API_Handler/ApiError';
 import User from '@src/dao/model/user';
 import { IUser, IUserDoc } from '@src/types/user';
+import { injectable } from 'inversify';
 
+@injectable()
 export class UserRepo {
   user: typeof User;
   constructor(){

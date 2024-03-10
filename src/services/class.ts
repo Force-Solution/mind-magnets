@@ -5,16 +5,15 @@ import { BadRequestError } from '@src/core/API_Handler/ApiError';
 
 import { BatchService } from '@src/services/batch';
 import { UserService } from '@src/services/user';
-
+import { TYPES } from '@src/types/types';
+import { injectable, inject } from 'inversify';
+@injectable()
 export class ClassService {
-  class: ClassRepo;
-  user: UserService;
-  batch: BatchService;
-  constructor() {
-    this.class = new ClassRepo();
-    this.user = new UserService();
-    this.batch = new BatchService();
-  }
+  constructor(
+    @inject(TYPES.ClassRepo) private classes: ClassRepo,
+    @inject(TYPES.UserService) private user: UserService,
+    @inject(TYPES.BatchService) private batch: BatchService,
+  ) {}
 
   public async createClass(
     data: Omit<IClass, 'batch'> & { batch: string },
@@ -31,13 +30,13 @@ export class ClassService {
       teacher: user?._id,
       batch: batch?._id,
     };
-    return await this.class.createClass(payload);
+    return await this.classes.createClass(payload);
   }
 
   public async getClass(userId: string): Promise<IClass[] | null> {
     const user = await this.user.getUserByUserId(userId);
     if (!user) throw new BadRequestError('Invalid userid');
 
-    return await this.class.classesByTeacher(user._id);
+    return await this.classes.classesByTeacher(user._id);
   }
 }

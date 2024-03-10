@@ -5,7 +5,9 @@ import * as Pipeline from '@src/dao/repository/pipelines';
 import { Duration } from '@src/types/roles';
 import { IRequest } from '@src/types/request';
 import { removeUnwantedChars } from '@src/helper/util';
+import { injectable } from 'inversify';
 
+@injectable()
 export class TeacherRepo {
   teacher: typeof Teacher;
   constructor(){

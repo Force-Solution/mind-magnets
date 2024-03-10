@@ -3,6 +3,9 @@ import { Duration } from '@src/types/roles';
 import * as Pipeline from '@src/dao/repository/pipelines';
 
 import Student from '@src/dao/model/student';
+import { injectable } from 'inversify';
+
+@injectable()
 export class StudentRepo {
   student: typeof Student;
 

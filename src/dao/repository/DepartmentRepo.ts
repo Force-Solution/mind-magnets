@@ -2,7 +2,9 @@ import Department from '@src/dao/model/department';
 import { BadRequestError } from '@src/core/API_Handler/ApiError';
 import { IDepartment, IDepartmentDoc } from '@src/types/department';
 import { IRequest } from '@src/types/request';
+import { injectable } from 'inversify';
 
+@injectable()
 export class DepartmentRepo {
   department: typeof Department;
   constructor() {
