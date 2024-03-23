@@ -8,7 +8,7 @@ export default {
     logoImg: Joi.string().allow('').optional(),
     startTime: Joi.string().optional(),
     endTime: Joi.string().optional(),
-    students: Joi.array().allow([]).items(Joi.string().email()).optional(),
+    students: Joi.array().allow(...[]).items(Joi.string().email()).optional(),
     batch: Joi.string().required()
   }),
 };
