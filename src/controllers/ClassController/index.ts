@@ -63,9 +63,9 @@ export class ClassController implements AppRoute {
     try {
       const { userId } = request.params;
 
-      await this.class.createClass(request.body, userId);
+     const classes =  await this.class.getClass(userId);
 
-      return Api.created(request, response, 'Class created');
+      return Api.created(request, response, classes);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
