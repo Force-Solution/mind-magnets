@@ -7,6 +7,7 @@ import { BatchService } from '@src/services/batch';
 import { UserService } from '@src/services/user';
 import { TYPES } from '@src/types/types';
 import { injectable, inject } from 'inversify';
+import { getClassesForTeacherRole } from './utils';
 @injectable()
 export class ClassService {
   constructor(
@@ -33,10 +34,7 @@ export class ClassService {
     return await this.classes.createClass(payload);
   }
 
-  public async getClass(userId: string): Promise<IClass[] | null> {
-    const user = await this.user.getUserByUserId(userId);
-    if (!user) throw new BadRequestError('Invalid userid');
-
-    return await this.classes.classesByTeacher(user._id);
+  public async getClass(userId: string, _role: string) {
+    return await this.classes.executeQuery(getClassesForTeacherRole(Number(userId)));
   }
 }

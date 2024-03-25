@@ -25,4 +25,9 @@ export class ClassRepo {
   public async classesByTeacher(teacher: mongoose.Types.ObjectId): Promise<IClassDoc[] | null> {
     return this.class.find({teacher});
   }
+
+  public async executeQuery(pipeline: any[]){
+    return this.class.aggregate(pipeline);
+  }
+
 }

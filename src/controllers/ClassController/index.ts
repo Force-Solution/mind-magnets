@@ -3,7 +3,7 @@ import validator from '@src/validation/validator';
 import { Request, Response, Router } from 'express';
 
 import { authorization } from '@src/auth/authorization';
-import { authenticate } from '@src/auth/jwtUtil';
+import { ExtendedRequest, authenticate } from '@src/auth/jwtUtil';
 import * as ErrorBoundary from '@src/helper/ErrorHandling';
 import { ValidationSource } from '@src/types/request';
 import { IRole } from '@src/types/roles';
@@ -14,6 +14,7 @@ import user from '@src/validation/schema/user';
 import { ClassService } from '@src/services/class';
 
 import { container } from '@src/inversify.config';
+import { BadTokenError } from '@src/core/API_Handler/ApiError';
 
 export class ClassController implements AppRoute {
   public route = '/class';
@@ -62,10 +63,13 @@ export class ClassController implements AppRoute {
   ): Promise<any> => {
     try {
       const { userId } = request.params;
+      const { aud } = (request as ExtendedRequest).decodedToken;
 
-     const classes =  await this.class.getClass(userId);
+      if(typeof aud !== "string") return new BadTokenError("Invalid t0oken error");
 
-      return Api.created(request, response, classes);
+     const classes =  await this.class.getClass(userId, aud);
+
+      return Api.ok(request, response, classes);
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }
