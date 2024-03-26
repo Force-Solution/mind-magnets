@@ -40,6 +40,14 @@ export class ClassController implements AppRoute {
       this.getClass,
     );
 
+    this.router.get(
+      '/:className',
+      validator(user.auth, ValidationSource.HEADERS),
+      authenticate,
+      authorization([IRole.Teacher, IRole.Student]),
+      this.getClassByClassName,
+    );
+
     this.class = container.resolve<ClassService>(ClassService);
   }
   private addClass = async (
@@ -65,11 +73,27 @@ export class ClassController implements AppRoute {
       const { userId } = request.params;
       const { aud } = (request as ExtendedRequest).decodedToken;
 
-      if(typeof aud !== "string") return new BadTokenError("Invalid t0oken error");
+      if (typeof aud !== 'string')
+        return new BadTokenError('Invalid token error');
 
-     const classes =  await this.class.getClass(userId, aud);
+      const classes = await this.class.getClass(userId, aud);
 
       return Api.ok(request, response, classes);
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  };
+
+  private getClassByClassName = async (
+    request: Request,
+    response: Response,
+  ) => {
+    try {
+      const { className } = request.params;
+
+      const classes = await this.class.getClassByClassName(className);
+      return Api.ok(request, response, classes);
+
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);
     }

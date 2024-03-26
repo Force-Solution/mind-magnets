@@ -7,7 +7,7 @@ import { BatchService } from '@src/services/batch';
 import { UserService } from '@src/services/user';
 import { TYPES } from '@src/types/types';
 import { injectable, inject } from 'inversify';
-import { getClassesForTeacherRole } from './utils';
+import { getClassByClassName, getClassesForTeacherRole } from './utils';
 @injectable()
 export class ClassService {
   constructor(
@@ -36,5 +36,9 @@ export class ClassService {
 
   public async getClass(userId: string, _role: string) {
     return await this.classes.executeQuery(getClassesForTeacherRole(Number(userId)));
+  }
+
+  public async getClassByClassName(className: string){
+    return await this.classes.executeQuery(getClassByClassName(className));
   }
 }
