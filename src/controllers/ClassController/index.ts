@@ -33,7 +33,7 @@ export class ClassController implements AppRoute {
     );
 
     this.router.get(
-      '/:userId',
+      '/user/:userId',
       validator(user.auth, ValidationSource.HEADERS),
       authenticate,
       authorization([IRole.Teacher, IRole.Student]),
