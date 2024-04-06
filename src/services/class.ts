@@ -39,6 +39,7 @@ export class ClassService {
   }
 
   public async getClassByClassName(className: string){
-    return await this.classes.executeQuery(getClassByClassName(className));
+    const classes =  await this.classes.executeQuery(getClassByClassName(className));
+    return classes[0];
   }
 }
