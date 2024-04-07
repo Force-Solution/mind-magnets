@@ -1,4 +1,7 @@
 build
 node_modules
 logs
+
+#ENV
 .env
+.env.local
