@@ -1,3 +1,5 @@
+import getDecorators from "inversify-inject-decorators";
+import { container } from "@src/inversify.config";
 import { TestRepo } from '@src/dao/repository/TestRepo';
 import { ITest } from '@src/types/test';
 import { TYPES } from '@src/types/types';
@@ -6,13 +8,19 @@ import mongoose from 'mongoose';
 import { BatchService } from './batch';
 import { ClassService } from './class';
 import { UserService } from './user';
+
+const {lazyInject} = getDecorators(container);
 @injectable()
 export class TestService {
+  @lazyInject(TYPES.UserService)
+  private user!: UserService;
+
+  @inject(TYPES.ClassService) 
+  private classes!: ClassService;
+  
   constructor(
     @inject(TYPES.TestRepo) private test: TestRepo,
     @inject(TYPES.BatchService) private batch: BatchService,
-    @inject(TYPES.UserService) private user: UserService,
-    @inject(TYPES.ClassService) private classes: ClassService,
   ) {}
 
   public async countAllTestsByTeacher(id: mongoose.Types.ObjectId | undefined) {

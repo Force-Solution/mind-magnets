@@ -28,7 +28,6 @@ import { TYPES } from '@src/types/types';
 
 const container = new Container();
 
-
 container.bind<BatchRepo>(TYPES.BatchRepo).to(BatchRepo);
 container.bind<ClassRepo>(TYPES.ClassRepo).to(ClassRepo);
 container.bind<DepartmentRepo>(TYPES.DepartmentRepo).to(DepartmentRepo);

@@ -25,13 +25,20 @@ import { NotificationType } from '@src/types/notifications';
 import { IStudent, IStudentDoc } from '@src/types/student';
 import { BatchService } from '@src/services/batch';
 import { StudentService } from '@src/services/student';
+import getDecorators from 'inversify-inject-decorators';
+import { container } from '@src/inversify.config';
+
+const {lazyInject} = getDecorators(container);
 @injectable()
 export class UserService {
+
+  @lazyInject(TYPES.TestService) 
+  private test!: TestService;
+
   constructor(
     @inject(TYPES.UserRepo) private user: UserRepo,
     @inject(TYPES.PaymentService) private payment: PaymentService,
     @inject(TYPES.TokenService) private token: TokenService,
-    @inject(TYPES.TestService) private test: TestService,
     @inject(TYPES.TeacherService) private teacher: TeacherService,
     @inject(TYPES.StudentService) private student: StudentService,
     @inject(TYPES.BatchService) private batch: BatchService,
