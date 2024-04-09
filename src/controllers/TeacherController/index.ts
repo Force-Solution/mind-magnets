@@ -25,6 +25,15 @@ export class TeacherController implements AppRoute {
       validator(teacher.createClass),
       this.createClass,
     );
+
+    this.router.post(
+      '/test/create',
+      validator(user.auth, ValidationSource.HEADERS),
+      authenticate,
+      authorization(IRole.Teacher),
+      validator(teacher.createTest),
+      this.createTest,
+    );
   }
 
   private async createClass(
@@ -38,6 +47,17 @@ export class TeacherController implements AppRoute {
       //   teacher: sub as string,
       // };
       //classService.createClass(payload);
+      return Api.created(request, response, 'Class Created');
+    } catch (error) {
+      ErrorBoundary.catchError(request, response, error);
+    }
+  }
+
+  private async createTest(
+    request: Request,
+    response: Response,
+  ): Promise<any> {
+    try {
       return Api.created(request, response, 'Class Created');
     } catch (error) {
       ErrorBoundary.catchError(request, response, error);

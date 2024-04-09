@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
-import Test from '../model/test';
+import Test from '@src/dao/model/test';
 import { injectable } from 'inversify';
+import { ITest } from '@src/types/test';
 @injectable()
 export class TestRepo {
   test: typeof Test;
@@ -13,5 +14,9 @@ export class TestRepo {
 
   public async executePipeline(pipeline: any[]) {
     return this.test.aggregate(pipeline);
+  }
+
+  public async addTest(payload: ITest) {
+    return this.test.create(payload);
   }
 }

@@ -19,5 +19,15 @@ export default {
     batch: Joi.string().required(),
     startTime: Joi.string().required(),
     endTime: Joi.string().required()
+  }),
+  createTest: Joi.object().keys({
+    name: Joi.string().required(),
+    batch: Joi.string().required(),
+    class: Joi.string().required(),
+    teacher: Joi.string().required(),
+    maxiumMarks: Joi.number().required(),
+    type: Joi.string().required(),
+    startTime: Joi.string().required(),
+    endTime: Joi.string().required()
   })
 };

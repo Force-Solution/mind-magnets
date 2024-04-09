@@ -28,6 +28,18 @@ const schema = new Schema<ITestDoc, ITestModel>(
     maximumMarks:{
         type: Number,
         required: true,
+    },
+    type:{
+      type: String,
+      default: 'publish'
+    },
+    startTime: {
+      type: Date,
+      required: true
+    },
+    endTime: {
+      type: Date,
+      required: true
     }
   },
   { timestamps: true },
